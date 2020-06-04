@@ -1,0 +1,63 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "font-awesome@5.12.0-2",
+      "destination": "wwwroot/lib/font-awesome/",
+      "files": [
+        "webfonts/fa-brands-400.eot",
+        "css/all.css",
+        "webfonts/fa-brands-400.svg",
+        "webfonts/fa-brands-400.ttf",
+        "webfonts/fa-brands-400.woff",
+        "webfonts/fa-brands-400.woff2",
+        "webfonts/fa-regular-400.eot",
+        "webfonts/fa-regular-400.svg",
+        "webfonts/fa-regular-400.ttf",
+        "webfonts/fa-regular-400.woff",
+        "webfonts/fa-regular-400.woff2",
+        "webfonts/fa-solid-900.eot",
+        "webfonts/fa-solid-900.svg",
+        "webfonts/fa-solid-900.ttf",
+        "webfonts/fa-solid-900.woff",
+        "webfonts/fa-solid-900.woff2"
+      ]
+    }
+  ,
+{
+  "library": "formvalidation@0.6.2-dev",
+  "destination": "wwwroot/lib/formvalidation/",
+  "files": [
+    "css/formValidation.css",
+    "js/formValidation.js"
+  ]
+}
+,
+{
+  "library": "es6-shim@0.35.5",
+  "destination": "wwwroot/lib/es6-shim/"
+}
+,
+{
+  "library": "jquery.bootstrapvalidator@0.5.3",
+  "destination": "wwwroot/js/jquery.bootstrapvalidator/"
+}
+,
+{
+  "library": "jquery.bootstrapvalidator@0.5.3",
+  "destination": "wwwroot/lib/jquery.bootstrapvalidator/"
+}
+,
+{
+  "library": "twitter-bootstrap@4.5.0",
+  "destination": "wwwroot/lib/twitter-bootstrap/",
+  "files": [
+    "js/bootstrap.min.js",
+    "js/bootstrap.js",
+    "css/bootstrap.css",
+    "css/bootstrap.min.css"
+  ]
+}
+]
+}
