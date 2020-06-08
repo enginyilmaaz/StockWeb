@@ -102,7 +102,7 @@ namespace Stock.Web.Controllers
 
                 });
                 var fullUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, url);
-                await _emailSender.SendEmailAsync(model.Email, "Hesap Onayı", $"<br/><br/>Hesabınızı onaylamak için lütfen <a href='https://localhost:44387{fullUrl}'>tıklayınız.</a>");
+                await _emailSender.SendEmailAsync(model.Email, "Hesap Onayı", $"<br/><br/>Hesabınızı onaylamak için lütfen <a href='{fullUrl}'>tıklayınız.</a>");
 
                 TempData["message-title"] = "İşlem Başarılı";
                 TempData["message-data"] = "Kayıt başarılı başarılı, giriş yapabilmek için epostanızı onaylayın. " ;
