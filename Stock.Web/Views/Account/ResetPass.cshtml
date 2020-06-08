@@ -1,0 +1,115 @@
+﻿@model Stock.Web.Models.Account.UserResetPasswordModel
+
+@{
+    ViewData["Title"] = "Parolan Güncelle - Stok Web";
+}
+
+
+<div class="login-form ">
+    <div class="container">
+        <div class="row justify-content-center ">
+            <div class="col-md-7">
+                <div class="card shadow-lg">
+                    <div class="card-header text-center h5">Parola Güncelleme Formu</div>
+                    <div class="card-body">
+                        <form asp-action="ResetPass" id="resetForm">
+                            <input type="hidden" asp-for="_Token">
+                            <input type="hidden" asp-for="_UserId">
+                            <div asp-validation-summary="All" class="text-danger"></div>
+                          
+
+                                <div class="form-group row">
+                                    <label asp-for="Password" class="col-md-3 col-form-label text-md-right"></label>
+                                    <div class="col">
+                                        <input asp-for="Password" class="form-control" />
+                                        <span asp-validation-for="Password" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label asp-for="RePassword" class="col-md-3 col-form-label text-md-right"></label>
+                                    <div class="col">
+                                        <input asp-for="RePassword" class="form-control" />
+                                        <span asp-validation-for="RePassword" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row text-center">
+                                    <div class="col-md-3 col-form-label text-md-right"></div>
+                                    <div class="col">
+
+                                        <button type="submit" class="btn btn-primary text-center w-100">
+                                            Parolanı Güncelle
+                                        </button>
+                                    </div>
+
+                                </div>
+                                <div class="form-group row text-center">
+                                    <div class="col-md-3 col-form-label"></div>
+                                    <div class="col">
+                                        <a href="#" onClick="history.go(-1); return false;" class="btn btn-link">
+                                            Geri Dön
+                                        </a>
+
+                                    </div>
+
+                                </div>
+
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+
+
+
+        $(function () {
+            $("#resetForm").validate({
+
+
+                rules: {
+                  
+                    Password: {
+                        required: true,
+                        minlength: 6
+
+                    },
+                    RePassword: {
+                        required: true,
+                        minlength: 6,
+                        equalTo: "#Password"
+
+                    }
+
+                },
+                messages: {
+                   
+                    Password: {
+                        required: "Boş bırakamazsınız",
+                        minlength: "Mininum 6 karakter olmalı"
+
+                    },
+                    RePassword: {
+                        required: "Boş bırakamazsınız",
+                        minlength: "Mininum 6 karakter olmalı",
+                        equalTo: "Girilen parolalar birbiriyle uyuşmuyor"
+
+                    }
+
+                },
+
+            });
+        });
+    </script>
+
+
+
+}

@@ -22,5 +22,3 @@ $('.form-control-chosen-required').chosen({
     allow_single_deselect: false,
     width: '100%'
 });
-
-$.validator.setDefaults({ ignore: ":hidden:not(select)" })

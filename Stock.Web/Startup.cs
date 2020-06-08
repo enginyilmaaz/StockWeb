@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Stock.Web.EmailServices;
 using StockWeb.Business.Abstract;
 using StockWeb.Business.Concreate;
 using StockWeb.Data.Abstract;
@@ -35,6 +36,12 @@ namespace Stock.Web
             services.AddIdentity<Users, IdentityRole>().AddEntityFrameworkStores<APPDBContext>()
                 .AddDefaultTokenProviders();
 
+
+
+
+
+
+
             services.Configure<IdentityOptions>(options => {
                 // password
                 options.Password.RequireDigit =false;
@@ -50,7 +57,7 @@ namespace Stock.Web
 
                 // options.User.AllowedUserNameCharacters = "";
                 options.User.RequireUniqueEmail = true;
-                options.SignIn.RequireConfirmedEmail = false;
+                options.SignIn.RequireConfirmedEmail = true;
                 options.SignIn.RequireConfirmedPhoneNumber = false;
             });
 
@@ -76,6 +83,14 @@ namespace Stock.Web
 
             services.AddScoped<IProductService, ProductManager>();
             services.AddScoped<ICategoryService, CategoryManager>();
+            services.AddScoped<IEmailSender, SMTPEmailSender>(i =>
+                new SMTPEmailSender(
+                    Configuration["EmailSender:Host"],
+                    Configuration.GetValue<int>("EmailSender:Port"),
+                    Configuration.GetValue<bool>("EmailSender:EnableSSL"),
+                    Configuration["EmailSender:Username"],
+                    Configuration["EmailSender:Password"])
+            );
 
             services.AddControllersWithViews();
         }

@@ -131,3 +131,7 @@ ui-autocomplete {
     position: absolute;
     width: 1px;
 }
+
+.validation-summary-errors ul li {
+    list-style: none
+}

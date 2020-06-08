@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Stock.Web.EmailServices;
 using Stock.Web.Models.Account;
 using Stock.Web.Models.Product;
 using StockWeb.Data.Entity;
@@ -15,11 +17,12 @@ namespace Stock.Web.Controllers
     {
         private UserManager<Users> _userManager;
         private SignInManager<Users> _signInManager;
-
-        public AccountController(UserManager<Users> userManager, SignInManager<Users> signInManager)
+        private IEmailSender _emailSender;
+        public AccountController(UserManager<Users> userManager, SignInManager<Users> signInManager, IEmailSender emailSender)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _emailSender = emailSender;
 
         }
         public IActionResult Index()
@@ -38,10 +41,18 @@ namespace Stock.Web.Controllers
         public async Task<IActionResult> Login(AccountLoginViewModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
-
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Bu kullanıcı adı ile daha önce hesap oluşturulmamış");
+                return View(model);
+            }
             if (user != null)
             {
-
+                if (!await _userManager.IsEmailConfirmedAsync(user))
+                {
+                    ModelState.AddModelError("", "Lütfen email hesabınıza gelen link ile üyeliğinizi onaylayınız.");
+                    return View();
+                }
                 var result = await _signInManager.PasswordSignInAsync(user, model.Password, true,false);
 
                 if (result.Succeeded)
@@ -82,8 +93,19 @@ namespace Stock.Web.Controllers
 
             if (result.Succeeded)
             {
+
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var url = Url.Action("ConfirmEmail", "Account", new
+                {
+                    userId = user.Id,
+                    UserToken = code
+
+                });
+                var fullUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, url);
+                await _emailSender.SendEmailAsync(model.Email, "Hesap Onayı", $"<br/><br/>Hesabınızı onaylamak için lütfen <a href='https://localhost:44387{fullUrl}'>tıklayınız.</a>");
+
                 TempData["message-title"] = "İşlem Başarılı";
-                TempData["message-data"] = "Kayıt başarılı başarılı, giriş yapabilirsiniz.";
+                TempData["message-data"] = "Kayıt başarılı başarılı, giriş yapabilmek için epostanızı onaylayın. " ;
                 TempData["message-type"] = "success";
                 return RedirectToAction("Login", "Account");
             }
@@ -106,6 +128,39 @@ namespace Stock.Web.Controllers
         }
 
 
+        public async Task<IActionResult> ConfirmEmail(string UserId, string UserToken)
+        {
+            if(UserId==null || UserToken==null) return RedirectToAction("ErrorOccured", "Admin");
+
+            var user = await _userManager.FindByIdAsync(UserId);
+
+            if (user.EmailConfirmed)
+            {
+                TempData["message-title"] = "Bilgilendirme";
+                TempData["message-data"] = "Hesabınız zaten onaylı, giriş yapabilirsiniz.";
+                TempData["message-type"] = "info";
+
+                return RedirectToAction("Login", "Account");
+            }
+            if (user != null)
+            {
+                var result = await _userManager.ConfirmEmailAsync(user, UserToken);
+                if (result.Succeeded)
+                {
+                    // cart objesini oluştur.
+
+
+                    TempData["message-title"] = "İşlem Başarılı";
+                    TempData["message-data"] = "Hesabınız onaylandı, giriş yapabilirsiniz.";
+                    TempData["message-type"] = "success";
+
+                    return RedirectToAction("Login", "Account");
+                }
+            }
+            return RedirectToAction("ErrorOccured", "Admin");
+
+
+        }
 
 
 
@@ -210,6 +265,108 @@ namespace Stock.Web.Controllers
         }
 
 
+        public IActionResult ForgotPassword()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                TempData["message-title"] = "Bilgi";
+                TempData["message-data"] = "Zaten giriş yapmış görünüyorsunuz, şifrenizi değiştirmek için hesabım bölümünden değiştirebilirsiniz..";
+                TempData["message-type"] = "warning";
+                return View("UserDetails");
+            }
+
+            
+            return View();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string Email)
+        {
+          
+
+            var user = await _userManager.FindByEmailAsync(Email);
+
+            if (user == null)
+            {
+                TempData["message-title"] = "Hata";
+                TempData["message-data"] = "Böyle bir kullanıcı yok";
+                TempData["message-type"] = "danger";
+                return View();
+            }
+
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var url = Url.Action("ResetPass", "Account", new
+            {
+                UserId = user.Id,
+                Token = code
+            });
+            var fullUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, url);
+            // email
+            await _emailSender.SendEmailAsync(Email, "Parola Sıfırla", $"<br><br>Parolanızı yenilemek için linke <a href='{fullUrl}'>tıklayınız.</a>");
+            TempData["message-title"] = "İşlem Başarılı";
+            TempData["message-data"] = "Şifre sıfırlama linki gönderildi. Lütfen eposta hesabınıza kontrol ediniz.";
+            TempData["message-type"] = "success";
+            return View();
+        }
+
+
+
+        public IActionResult ResetPass(string UserId, string Token)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                TempData["message-title"] = "Bilgi";
+                TempData["message-data"] = "Zaten giriş yapmış görünüyorsunuz, şifrenizi değiştirmek için hesabım bölümünden değiştirebilirsiniz..";
+                TempData["message-type"] = "warning";
+                return View("UserDetails");
+            }
+            if (UserId == null || Token == null)
+            {
+                return RedirectToAction("ErrorOccured", "Admin");
+            }
+
+            var model = new UserResetPasswordModel
+            {
+                _Token = Token,
+                _UserId = UserId
+            };
+
+
+            return View(model);
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPass(UserResetPasswordModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var user = await _userManager.FindByIdAsync(model._UserId);
+            if (user == null)
+            {
+                TempData["message-title"] = "Hata";
+                TempData["message-data"] = "Böyle bir kullanıcı yok";
+                TempData["message-type"] = "danger";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, model._Token, model.Password);
+
+            if (result.Succeeded)
+            {
+                TempData["message-title"] = "Başarılı";
+                TempData["message-data"] = "Parolanız başarıyla güncellendi.";
+                TempData["message-type"] = "success";
+                return RedirectToAction("Login", "Account");
+            }
+
+            return View(model);
+        }
 
 
     }
