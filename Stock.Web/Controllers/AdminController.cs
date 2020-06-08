@@ -114,8 +114,9 @@ namespace Stock.Web.Controllers
                     var getExtension = Path.GetExtension(ImageFile.FileName);
                     var fileName = string.Format($"{Guid.NewGuid()}{getExtension}");
                     _ImageUrl = "Uploads\\ProductImages\\" + fileName;
+                  
                     var path = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot", _ImageUrl);
-
+                    Directory.CreateDirectory(Path.GetDirectoryName(path));
 
 
                     using (var stream = new FileStream(path, FileMode.Create))
@@ -133,7 +134,7 @@ namespace Stock.Web.Controllers
                     Name = model.Name,
                     PurchasePrice = model.PurchasePrice,
                     SellingPrice = model.SellingPrice,
-                    Quantity = model.Quantity,
+                    Quantity = 0,
                     ImageUrl = _ImageUrl
 
 
@@ -419,7 +420,7 @@ namespace Stock.Web.Controllers
                 ProductId = entity.Id,
                 Name = entity.Name,
                 ImageUrl = entity.ImageUrl,
-                Quantity = entity.Quantity,
+               
               
                 SellingPrice = entity.SellingPrice,
                 PurchasePrice = entity.PurchasePrice,
@@ -457,8 +458,8 @@ namespace Stock.Web.Controllers
                     var fileName = string.Format($"{Guid.NewGuid()}{getExtension}");
                 string _ImageUrl = "Uploads\\ProductImages\\" + fileName;
                 var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", _ImageUrl);
-
-                    entity.ImageUrl = _ImageUrl;
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                entity.ImageUrl = _ImageUrl;
 
                 using (var stream = new FileStream(path, FileMode.Create))
                     {
