@@ -1,38 +1,61 @@
-﻿<nav class="navbar navbar-expand-xl navbar-dark bg-dark  fixed-top pl-5">
-<a class="navbar-brand" href="#">Stok Takibi</a>
-<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-no-login" aria-controls="navbar-no-login" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-</button>
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<Users> MyManager
 
-<div class="collapse navbar-collapse" id="navbar-no-login">
-    <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-            <a class="nav-link" href="#">Ana Sayfa <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item dropdown ">
-            <a class="nav-link dropdown-toggle" href="#" id="dropdown-products" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Ürünler</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown-products">
+@{
+    var user = await MyManager.GetUserAsync(User);
+}
+<nav class="navbar navbar-expand-xl navbar-dark bg-dark  fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">StockWeb</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-no-login" aria-controls="navbar-no-login" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-                <a class="dropdown-item" href="products/">Ürünler Listele</a>
-                <a class="dropdown-item" href="products/create">Ürün Ekle</a>
-            </div>
-        </li>
-        <li class="nav-item dropdown pr-5">
-            <a class="nav-link dropdown-toggle" href="#" id="dropdown-products-stocks" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Stoklar</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown-products-stocks">
+        <div class="collapse navbar-collapse pl-4" id="navbar-no-login">
+            <ul class="navbar-nav  mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link pr-4" href="~/"><i class="fas fa-home pr-1"></i> Ana Sayfa <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item dropdown pr-4">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="dropdown-products" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-store fa-sm pr-2"></i>Ürün İşlemleri</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown-products">
 
-                <a class="dropdown-item" href="#">Stokları Göster</a>
-                <a class="dropdown-item" href="#">Stok Güncelle</a>
-            </div>
-        </li>
-    </ul>
-    <ul  class="navbar-nav navbar-right ">
-        <li class="nav-item dropdown ">
-            <a class="nav-link dropdown-toggle" href="#" id="dropdown-no-login" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Hesabım</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown-no-login">
-                <a class="dropdown-item" href="account/logout">Çıkış Yap</a>
-            </div>
-        </li>
-    </ul>
-</div>
+                        <a class="dropdown-item" href="~/Admin/Products">Ürünleri Göster</a>
+                        <a class="dropdown-item" href="~/Admin/Create/Product">Ürün Ekle</a>
+                    </div>
+                </li>
+                
+                
+                <li class="nav-item dropdown pr-4">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="dropdown-products" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-store fa-sm pr-2"></i>Kategori İşlemleri</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown-products">
+
+                        <a class="dropdown-item" href="~/Admin/Categories">Kategorileri Göster</a>
+                        <a class="dropdown-item" href="~/Admin/Create/Category">Kategori Ekle</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown pr-4">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="dropdown-products-stocks" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-warehouse fa-sm pr-2"></i>Stok İşlemleri</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown-products-stocks">
+
+                        <a class="dropdown-item" href="~/Admin/Stock/Insert">Satın Alma / Stok Girişi Yap </a>
+                        <a class="dropdown-item" href="~/Admin/Stock/Remove">Satış / Stok Çıkışı Yap  </a>
+                        <a class="dropdown-item" href="~/Admin/Purchases">Satın Almaları Listele </a>
+                        <a class="dropdown-item" href="~/Admin/Sellings">Satışları Listele </a>
+                    </div>
+                </li>
+            </ul>
+            <ul class="navbar-nav navbar-right pr-4">
+                <li class="nav-item dropdown ">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="dropdown-no-login" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-sm pr-2"></i>Hoşgeldin, @user.FirstName</a>
+                    
+                    <div class="dropdown-menu" aria-labelledby="dropdown-no-login">
+                        <a class="dropdown-item" href="~/Account/Details">Hesabım </a>
+                        <a class="dropdown-item" href="~/Account/Logout">Çıkış Yap </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+    </div>
 </nav>

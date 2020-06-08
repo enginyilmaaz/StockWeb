@@ -1,0 +1,177 @@
+﻿@model Stock.Web.Models.Account.UserViewModel
+@{
+    ViewData["Title"] = "Hesabım - Stok Web";
+}
+<div aria-live="polite" aria-atomic="true" style="position: relative; z-index :999999">
+    <!-- Position it -->
+    <div style="position: absolute; top: 0; right: 0;">
+
+        <!-- Then put toasts within -->
+        <div class="toast shadow-lg" id="userPassUpdateToast" role="alert" aria-live="assertive" aria-atomic="true">
+
+            <div class="px-3 py-2 alert-success">
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">&times;</button>
+                <strong>İşlem başarılı</strong>
+                <div>Parolanız Güncellendi</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="login-form ">
+    <div class="container">
+        <div class="row justify-content-center ">
+            <div class="col-md-7">
+                <div class="card shadow-lg">
+                    <div class="card-header text-center h5">Hesap Bilgileri</div>
+                    <div class="card-body">
+                        <form asp-action="UserDetails" id="EditUser">
+                            <div asp-validation-summary="All" class="text-danger"></div>
+                            <div class="form-group row">
+
+                                <label asp-for="UserDetailViewModel.FirstName" class="col-md-3 col-form-label text-md-right control-label"></label>
+                                <div class="col">
+                                    <input asp-for="UserDetailViewModel.FirstName" class="form-control" />
+                                    <span asp-validation-for="UserDetailViewModel.FirstName" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label asp-for="UserDetailViewModel.LastName" class="col-md-3 col-form-label text-md-right"></label>
+                                <div class="col">
+                                    <input asp-for="UserDetailViewModel.LastName" class="form-control" />
+                                    <span asp-validation-for="UserDetailViewModel.LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label asp-for="UserDetailViewModel.Email" class="col-md-3 col-form-label text-md-right"></label>
+                                <div class="col">
+                                    <input asp-for="UserDetailViewModel.Email" class="form-control" />
+                                    <span asp-validation-for="UserDetailViewModel.Email" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group row text-center">
+                                <div class="col-md-3 col-form-label text-md-right"></div>
+                                <div class="col">
+
+                                    <button type="submit" class="btn btn-primary text-center w-100">
+                                        Bilgileri Güncelle
+                                    </button>
+                                </div>
+
+                            </div>
+                            <div class="form-group row text-center">
+                                <div class="col-md-3 col-form-label"></div>
+                                <div class="col">
+                                    <a href="#" class="btn btn-link" data-toggle="modal" data-target="#userPassUpdateModal">
+                                        Parola Güncelle
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("Modals/_userPassUpdateModal")
+
+
+@section Scripts
+{
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+
+        $(function () {
+            $("#EditUser").validate({
+
+
+                rules: {
+                    UserDetailViewModel_FirstName: {
+                        required: true,
+                        minlength:6
+                    }
+                  
+
+                  }
+            
+
+            
+            
+
+    });
+        });
+        $(function () {
+            $("#PassChangeForm").validate({
+              
+
+                rules: {
+                       "ChangePassViewModel.Password": {
+                        required: true,
+                        minlength: 6
+                    }
+                    ,
+                    "ChangePassViewModel.RePassword": {
+                        required: true,
+                        minlength: 6,
+                        equalTo: '#ChangePassViewModel_Password'
+
+                    }
+
+                }
+                ,
+                messages: {
+                    "ChangePassViewModel.Password": {
+                        required: "Boş bırakamazsınız",
+                        minlength: "Minimum 6 karakter ",
+                    }
+                    ,
+                    "ChangePassViewModel.RePassword": {
+                        required: "Boş bırakamazsınız",
+                        minlength: "Minimum 6 karakter",
+                        equalTo: "Girdiğiniz parola üsteki ile eşleşmiyor",
+
+                    }
+
+                }
+
+
+
+            });
+        });
+
+        $("#PassChangeForm").submit(function (e) {
+
+            e.preventDefault(); // avoid to execute the actual submit of the form.
+
+            var form = $(this);
+            var url = form.attr('action');
+            if ($("#PassChangeForm").valid()) {
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: form.serialize(), // serializes the form's elements.
+                    success: function (data) {
+                        $('#userPassUpdateToast').toast('show');
+                        $('#userPassUpdateModal').modal('hide');
+                    }
+                });
+
+            }
+           
+
+        });
+    
+    </script>
+
+}

@@ -1,0 +1,75 @@
+﻿@model Stock.Web.Models.Category.CreateCategoryViewModel
+@{
+    ViewData["Title"] = "Kategori Oluştur - Stok Web";
+}
+
+
+<div class="login-form ">
+    <div class="container">
+        <div class="row justify-content-center ">
+            <div class="col-md-7">
+                <div class="card shadow-lg">
+                    <div class="card-header text-center h5">Kategori Oluştur</div>
+                    <div class="card-body">
+                        <form asp-action="CreateCategory" id="CreateCatForm">
+
+                            <div class="form-row">
+
+                                <div class="form-group col">
+                                    <label asp-for="CategoryName" class="control-label"></label>
+                                    <input asp-for="CategoryName" class="form-control" />
+                                    <span asp-validation-for="CategoryName" class="text-danger"></span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-row"></div>
+                            <button type="submit" class="btn btn-primary w-100">Ürün Ekle</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+
+
+
+    $(function() {
+        $("#CreateCatForm").validate({
+
+
+            rules: {
+                CategoryName: {
+                    required: true,
+                    minlength:3
+
+                }
+              
+            },
+            messages: {
+                CategoryName: {
+                    required: "Boş bırakamazsınız",
+                    minlength: "Minimum 3 karakter olmalı"
+
+                }
+               
+            },
+
+
+        });
+});
+    </script>
+
+
+
+}

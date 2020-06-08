@@ -15,14 +15,15 @@
     };
 }(jQuery));
 
-$("[datatype='uint']").inputFilter(function (value) {
-    return /^\d*$/.test(value);
-});
+
 
 $("[datatype='currency']").inputFilter(function (value) {
     return /^-?\d*[.,]?\d{0,2}$/.test(value);
 });
 
+$("[datatype='uint']").inputFilter(function (value) {
+    return /^\d*$/.test(value);
+});
 
 $("#intTextBox").inputFilter(function (value) {
     return /^-?\d*$/.test(value);

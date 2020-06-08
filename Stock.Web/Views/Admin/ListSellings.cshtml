@@ -1,0 +1,50 @@
+﻿@model Stock.Web.Models.Product.SellingListViewModel
+@{
+    ViewData["Title"] = "Satışlar - Stok Web";
+}
+@section Styles{
+
+    <link rel="stylesheet" type="text/css" href="~/lib/datatable/datatables.min.css" />
+}
+
+<div class="container mt-3">
+
+    <h4 class="text-center"> Satış / Stok Giriş Listesi</h4>
+    <hr />
+    <table id="example" class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col" class="py-2 text-center"> Ürün Adı</th>
+                <th scope="col" class="py-2"> Adet Fiyatı</th>
+                <th scope="col" class="py-2 text-center">Miktar</th>
+                <th scope="col" class="py-2 text-center">Toplam Fiyat</th>
+                <th scope="col" class="py-2 text-center">İşlem Zamanı</th>
+                <th scope="col" class="py-2">Kullanıcı</th>
+
+            </tr>
+        </thead>
+        <tbody class="table-hover ">
+            @foreach (var item in Model.Sellings)
+            {
+                <tr>
+                    <td class="py-0 pt-0">@item.Product.Name</td>
+                    <td class="py-0 pt-0">@item.PiecePrice</td>
+                    <td class="py-0 pt-0 text-center">@item.Quantity</td>
+                    <td class="py-0 pt-0 text-center">@item.TotalPrice</td>
+                    <td class="py-0 pt-0 text-center">@item.OperationTime</td>
+                    <td class="py-0 pt-0">@item.User.Email</td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+
+@section Scripts
+
+{
+    @await Html.PartialAsync("_dataTable")
+
+}

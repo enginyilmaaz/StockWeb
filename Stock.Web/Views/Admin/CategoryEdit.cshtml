@@ -1,0 +1,36 @@
+﻿@model Stock.Web.Models.Category.EditCategoryViewModel
+@{
+    ViewData["Title"] = "Kategoriyi Düzenle - Stok Web";
+}
+
+
+<div class="login-form ">
+    <div class="container">
+        <div class="row justify-content-center ">
+            <div class="col-md-7">
+                <div class="card shadow-lg">
+                    <div class="card-header text-center h5">Kategori Güncelle</div>
+                    <div class="card-body">
+                        <form asp-action="CategoryEdit" id="EditCategoryForm">
+
+                            <div class="form-row">
+                                <input type="hidden" name="Id" value="@Model.Id">
+                                <div class="form-group col">
+                                    <label asp-for="CategoryName" class="control-label"></label>
+                                    <input asp-for="CategoryName" class="form-control" />
+                                    <span asp-validation-for="CategoryName" class="text-danger"></span>
+                                </div>
+
+                            </div>
+                           
+
+                            <div class="form-row"></div>
+                            <button type="submit" class="btn btn-primary w-100">Güncelle</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

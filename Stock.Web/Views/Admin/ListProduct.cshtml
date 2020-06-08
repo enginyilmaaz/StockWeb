@@ -1,34 +1,62 @@
 ﻿@model Stock.Web.Models.Product.ProductListViewModel
 
-<table class="table table-hover">
-    <thead class="table-dark">
-        <tr>
-            <th scope="col"> Ürün Görseli</th>
-            <th scope="col"> Ürün Adı</th>
-            <th scope="col">Alış Fiyatı</th>
-            <th scope="col">Satış Fiyatı</th>
-            <th scope="col">Miktar</th>
-            <th scope="col">Kategori</th>
-            <th scope="col">İşlemler</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Products)
-        {
-        <tr>
-            <td ><img src="~/@item.ImageUrl" height="64" width="64"></td>
-            <td class="pt-4">@item.Name</td>
-            <td class="pt-4">@item.PurchasePrice</td>
-            <td class="pt-4">@item.SellingPrice</td>
-            <td class="pt-5">@item.Quantity</td>
-            <td class="pt-4">@item.Category.CategoryName</td>
-            <td class="pt-4">
-                <a href="/Admin/UpdateProduct/@item.Id" class="btn btn-primary btn-sm mr-2">Güncelle</a>
+@{
+    ViewData["Title"] = "Ürünler - Stok Web";
+}
 
-                <a href="/Admin/DeleteProduct/@item.Id" class="btn btn-primary btn-sm mr-2">Sil</a>
+@section Styles{
 
-            </td>
-        </tr>
-        }
+    <link rel="stylesheet" type="text/css" href="~/lib/datatable/datatables.min.css" />
+}
+
+<div class="container mt-3">
+
+    <h4 class="text-center"> Ürün Listesi</h4>
+    <hr />
+    <table id="example" class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col" class="py-2 text-center"> Görsel</th>
+                <th scope="col" class="py-2"> Ürün Adı</th>
+                <th scope="col" class="py-2 text-center">Alış Fiyatı</th>
+                <th scope="col" class="py-2 text-center">Satış Fiyatı</th>
+                <th scope="col" class="py-2 text-center">Miktar</th>
+                <th scope="col" class="py-2">Kategori</th>
+                <th scope="col" class="py-2 text-center">İşlemler</th>
+            </tr>
+        </thead>
+        <tbody class="table-hover ">
+            @foreach (var item in Model.Products)
+            {
+                <tr>
+                    <td class="py-1 text-center">
+                        <a href="#" data-toggle="popover" data-placement="top" data-html=true data-trigger="focus" data-content="<img src='/@item.ImageUrl' height='160' width='160'>">
+                            <img src="~/@item.ImageUrl" height="32" width="32">
+                        </a>
+                    </td>
+                    <td class="py-0 pt-2">@item.Name</td>
+                    <td class="py-0 pt-2 text-center">@item.PurchasePrice</td>
+                    <td class="py-0 pt-2 text-center">@item.SellingPrice</td>
+                    <td class="py-0 pt-2 text-center">@item.Quantity</td>
+                    <td class="py-0 pt-2">@item.Category.CategoryName</td>
+                    <td class="py-0 pt-1 text-center">
+                        <a href="/Admin/Product/Delete/@item.Id" data-link="/Admin/Product/Delete/@item.Id" class="btn btn-danger btn-sm mr-1" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash" title="Sil"></i></a>
+
+                        <a href="/Admin/Product/Edit/@item.Id" class="btn btn-primary btn-sm"><i class="fas fa-edit" title="Güncelle"></i></a>
+
+                    </td>
+                </tr>
+            }
         </tbody>
-</table>
+    </table>
+
+</div>
+
+
+@await Html.PartialAsync("Modals/_deleteModal")
+@section Scripts
+
+{
+    @await Html.PartialAsync("_dataTable")
+
+}

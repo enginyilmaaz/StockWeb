@@ -1,0 +1,106 @@
+﻿@model Stock.Web.Models.Account.AccountLoginViewModel
+@{
+    ViewData["Title"] = "Giriş Yap - Stok Web";
+}
+
+<main class="login-form ">
+    <div class="container">
+        <div class="row justify-content-center ">
+            <div class="col-md-7">
+                <div class="card shadow-lg">
+                    <div class="card-header text-center h5">Giriş Yap</div>
+                    <div class="card-body">
+                        <form asp-action="Login" id="loginForm">
+                            <div asp-validation-summary="All" class="text-danger text-center"></div>
+                            <div class="form-group row">
+                                <label asp-for="Email" class="col-md-2 col-form-label text-md-right"></label>
+                                <div class="col">
+                                    <input asp-for="Email" class="form-control" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group row mb-2">
+                                <label asp-for="Password" class="col-md-2 col-form-label text-md-right"></label>
+                                <div class="col">
+                                    <input asp-for="Password" class="form-control" />
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                         
+                            <div class="form-group row">
+                                <div class="col-md-2 col-form-label text-md-right"></div>
+                                <div class="col">
+                                    <div class="divider-65">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            Giriş Yap
+                                        </button>
+                                    </div>
+                                    <div class="divider-35 float-right">
+                                        <a href="~/Account/Register" class="btn btn-link float-right">
+                                            Kayıt ol?
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                      
+
+
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+  
+
+</main>
+
+@section Scripts {
+@await Html.PartialAsync("_ValidationScriptsPartial")
+<script>
+
+
+
+    $(function() {
+        $("#loginForm").validate({
+
+
+            rules: {
+                Email: {
+                    required: true,
+                    email:true
+
+                }
+                ,
+                Password: {
+                    required: true,
+                    minlength:6
+
+                }
+
+            },
+            messages: {
+               Email: {
+                    required: "Boş bırakamazsınız",
+                    email: "Email formatında olmalı"
+
+                },
+                Password: {
+                    required: "Boş bırakamazsınız",
+                    minlength: "Mininum 6 karakter olmalı"
+
+                }
+               
+            },
+
+
+        });
+});
+    </script>
+
+
+
+}

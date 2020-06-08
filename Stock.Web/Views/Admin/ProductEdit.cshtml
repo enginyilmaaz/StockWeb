@@ -1,0 +1,162 @@
+﻿@model Stock.Web.Models.Product.EditProductViewModel
+
+@{
+    ViewData["Title"] = "Ürün Güncelle - Stok Web";
+}
+<div class="login-form ">
+    <div class="container">
+        <div class="row justify-content-center ">
+            <div class="col-md-7">
+                <div class="card shadow-lg">
+                    <div class="card-header text-center h5">Ürün Güncelle Formu</div>
+                    <div class="card-body">
+                        <form asp-action="ProductEdit" id="CreateProductForm" enctype="multipart/form-data">
+                            <input type="hidden" name="ProductId" value="@Model.ProductId">
+                            <input type="hidden" name="ImageUrl" value="@Model.ImageUrl">
+                            <div class="form-row">
+
+                                <div class="form-group col">
+                                    <label asp-for="Name" class="control-label"></label>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label asp-for="CategoryId" class="control-label"></label>
+                                    @Html.DropDownListFor(x => x.CategoryId, new SelectList(ViewBag.CategoryList, "Id", "CategoryName"), "Lütfen kategori seçiniz", new { @class = "form-control  form-control-chosen-required", data_container = "body", data_live_search = "true", data_hide_disabled = "true", required = "required" })
+
+                                </div>  <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label asp-for="PurchasePrice" class="control-label"></label>
+                                    <input asp-for="PurchasePrice" class="form-control" datatype="currency" />
+                                    <span asp-validation-for="PurchasePrice" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-1"></div>
+                                <div class="form-group col">
+                                    <label asp-for="SellingPrice" class="control-label"></label>
+                                    <input asp-for="SellingPrice" class="form-control" datatype="currency" />
+                                    <span asp-validation-for="SellingPrice" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label asp-for="Quantity" class="control-label"></label>
+                                    <input asp-for="Quantity" class="form-control" datatype="uint" />
+                                    <span asp-validation-for="Quantity" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-1"></div>
+                                <div class="form-group col">
+                                    <label asp-for="ImageUrl" class="control-label"></label>
+                                    <div class="custom-file mb-3">
+                                        <input type="file" class="custom-file-input form-control" id="ImageFile" name="ImageFile" accept="image/*" />
+                                        <label class="custom-file-label" data-browse="Gözat.." for="ImageFile"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row"></div>
+                            <button type="submit" class="btn btn-primary w-100">Ürün Güncelle</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts
+{
+
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+
+      //  $('#CategoryId').val(@Model.ProductId);
+
+    $(function() {
+        $("#CreateProductForm").validate({
+
+
+            rules: {
+                Name: {
+                    required: true,
+
+                }
+                ,
+                SellingPrice: {
+                    required: true,
+                    number: true,
+
+                },
+
+               PurchasePrice: {
+                    required: true,
+                    number: true
+                }
+                ,
+                CategoryId: {
+                    required: true,
+
+                }
+                ,
+               ImageFile:
+                {
+                    required: false,
+
+                }
+                ,
+                Quantity: {
+                    digits: true,
+                    required: true,
+                }
+                ,
+            },
+            messages: {
+                Name: {
+                    required: "Boş bırakamazsınız",
+                }
+                ,
+                 CategoryId: {
+                     required: "Boş bırakamazsınız",
+
+                }
+                ,
+                Quantity: {
+                    required: "Boş bırakamazsınız",
+                    digits: "Sayısal bir değer girmelisiniz",
+                }
+                ,
+                SellingPrice: {
+                    required: "Boş bırakamazsınız",
+                    number: "Sayısal bir değer girmelisiniz",
+                }
+
+                ,
+                PurchasePrice: {
+                    required: "Boş bırakamazsınız",
+                    number: "Sayısal bir değer girmelisiniz",
+                }
+
+                
+                
+            },
+
+
+        });
+    });
+
+
+
+    </script>
+
+
+
+}

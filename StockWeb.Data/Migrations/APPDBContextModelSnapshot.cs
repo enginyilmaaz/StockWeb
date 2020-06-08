@@ -216,6 +216,9 @@ namespace StockWeb.Data.Migrations
                     b.Property<double>("PiecePrice")
                         .HasColumnType("float");
 
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -229,6 +232,8 @@ namespace StockWeb.Data.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("UserId");
 
@@ -248,6 +253,9 @@ namespace StockWeb.Data.Migrations
                     b.Property<double>("PiecePrice")
                         .HasColumnType("float");
 
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -261,6 +269,8 @@ namespace StockWeb.Data.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("UserId");
 
@@ -285,6 +295,12 @@ namespace StockWeb.Data.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -318,6 +334,9 @@ namespace StockWeb.Data.Migrations
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
+
+                    b.Property<bool>("isActive")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -394,6 +413,12 @@ namespace StockWeb.Data.Migrations
 
             modelBuilder.Entity("StockWeb.Data.Entity.Purchases", b =>
                 {
+                    b.HasOne("StockWeb.Data.Entity.Products", "Product")
+                        .WithMany("Purchases")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("StockWeb.Data.Entity.Users", "User")
                         .WithMany("Purchases")
                         .HasForeignKey("UserId");
@@ -401,6 +426,12 @@ namespace StockWeb.Data.Migrations
 
             modelBuilder.Entity("StockWeb.Data.Entity.Sellings", b =>
                 {
+                    b.HasOne("StockWeb.Data.Entity.Products", "Product")
+                        .WithMany("Sellings")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("StockWeb.Data.Entity.Users", "User")
                         .WithMany("Sellings")
                         .HasForeignKey("UserId");

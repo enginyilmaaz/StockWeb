@@ -51,5 +51,29 @@ namespace StockWeb.Business.Concreate
             return _productRepository.GetAllWithCategories();
         }
 
+        public void InsertStock(Purchases entity)
+        {
+           
+            _productRepository.InsertStock(entity);
+        }
+        public void RemoveStock(Sellings entity)
+        {
+
+            _productRepository.RemoveStock(entity);
+        }
+
+
+        public List<Purchases> ListProductPurchases()
+        {
+
+            return _productRepository.ListProductPurchases();
+        }
+
+
+        public List<Sellings> ListProductSellings()
+        {
+
+            return _productRepository.ListProductSellings();
+        }
     }
 }

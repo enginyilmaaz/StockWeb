@@ -23,7 +23,7 @@ namespace Stock.Web.Models.Product
         [Required(ErrorMessage = "Bu alanı boş bırakamazsınız")]
         public double SellingPrice { get; set; }
 
-        [DisplayName("Ürün Mikatarı")]
+        [DisplayName("Ürün Miktarı")]
         [Required(ErrorMessage = "Bu alanı boş bırakamazsınız")]
         public int Quantity { get; set; }
 
@@ -31,8 +31,8 @@ namespace Stock.Web.Models.Product
         [Required(ErrorMessage = "Bu alanı boş bırakamazsınız")]
         public int CategoryId { get; set; }
 
-        [DisplayName("ürün Görseli")]
+        [DisplayName("Ürün Görseli")]
         [Required(ErrorMessage = "Bu alanı boş bırakamazsınız")]
-        public int ImageUrl { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

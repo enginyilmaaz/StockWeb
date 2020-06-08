@@ -24,5 +24,8 @@ namespace StockWeb.Data.Entity
         public Categories Category { get; set; }
 
 
+        public List<Sellings> Sellings { get; set; }
+        public List<Purchases> Purchases { get; set; }
+
     }
 }

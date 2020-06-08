@@ -49,12 +49,12 @@ namespace StockWeb.Data.Concreate.EFCore
 
         }
 
-        public void Update(TEntity entity)
+        public async void Update(TEntity entity)
         {
             using (var context = new TContext())
             {
                 context.Entry(entity).State = EntityState.Modified;
-                context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
         }
 

@@ -10,7 +10,7 @@ jQuery.validator.setDefaults({
     },
     unhighlight: function (element) {
         jQuery(element).closest('.form-control').removeClass('is-invalid');
-        jQuery(element).closest('.form-control').addClass('is-valid');
+        
     },
 
     errorElement: 'div',

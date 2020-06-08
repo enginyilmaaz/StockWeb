@@ -20,5 +20,9 @@ namespace StockWeb.Business.Abstract
 
         void Delete(Products entity);
 
+        void InsertStock(Purchases entity);
+        void RemoveStock(Sellings entity);
+         List<Purchases> ListProductPurchases();
+         List<Sellings> ListProductSellings();
     }
 }

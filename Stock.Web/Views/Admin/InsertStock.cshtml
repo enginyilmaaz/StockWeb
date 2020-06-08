@@ -1,0 +1,129 @@
+﻿@model Stock.Web.Models.Stocks.StockViewModel
+@{
+    ViewData["Title"] = "Stok Girişi - Stock Web";
+}
+
+
+<div class="login-form ">
+    <div class="container">
+        <div class="row justify-content-center ">
+            <div class="col-md-7">
+                <div class="card shadow-lg">
+                    <div class="card-header text-center h5">Stok Girişi Yap</div>
+                    <div class="card-body">
+                        <form asp-action="InsertStock" id="InsertStockForm">
+
+
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label asp-for="ProductId" class="control-label"></label>
+                                    @Html.DropDownListFor(x => x.ProductId, new SelectList(ViewBag.ProductList, "Id", "Name"), "Lütfen ürün seçiniz", new { @class = "form-control  form-control-chosen-required", data_container = "body", data_live_search = "true", data_hide_disabled = "true", required = "required" })
+                                    <span asp-validation-for="ProductId" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label asp-for="PiecePrice" class="control-label"></label>
+                                    <input asp-for="PiecePrice" class="form-control" datatype="currency" />
+                                    <span asp-validation-for="PiecePrice" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label asp-for="Quantity" class="control-label"></label>
+                                    <input asp-for="Quantity" class="form-control" datatype="uint" />
+                                    <span asp-validation-for="Quantity" class="text-danger"></span>
+                                </div>
+
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label asp-for="TotalPrice" class="control-label"></label>
+                                    <input asp-for="TotalPrice" class="form-control" datatype="uint" disabled/>
+                                    <span asp-validation-for="TotalPrice" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-row"></div>
+                            <button type="submit" class="btn btn-primary w-100">Stok Ekle</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+
+        $("#Quantity,#PiecePrice").keyup(function () {
+            var quantity = parseFloat($("#Quantity").val());
+            var piece = parseFloat($("#PiecePrice").val());
+            var total = quantity * piece;
+            $("#TotalPrice").val(total);
+
+        });
+
+        $(function () {
+        $("#InsertStockForm").validate({
+
+
+            rules: {
+                ProductId: {
+                    required: true,
+
+                }
+                ,
+                SellingPrice: {
+                    required: true,
+                    number: true,
+
+                },
+
+                PurchasePrice: {
+                    required: true,
+                    number: true
+                }
+                ,
+                  Quantity: {
+                    required: true,
+                    number: true
+                }
+            },
+            messages: {
+                ProductId: {
+                    required: "Boş bırakamazsınız",
+                }
+                ,
+
+                PiecePrice: {
+                    required: "Boş bırakamazsınız",
+                    number: "Sayısal bir değer girmelisiniz",
+                }
+
+                ,
+               TotalPrice: {
+                    required: "Boş bırakamazsınız",
+                    number: "Sayısal bir değer girmelisiniz",
+                }
+                ,
+                  Quantity: {
+                      required: "Boş bırakamazsınız",
+               
+                }
+
+
+            },
+
+
+        });
+        });
+
+</script>
+}

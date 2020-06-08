@@ -13,7 +13,7 @@ namespace StockWeb.Data.Concreate.EFCore
 {
     public class APPDBContext : IdentityDbContext<Users>
     {
-       
+        
 
         public DbSet<Categories> Categories { get; set; }
         public DbSet<Products> Products { get; set; }
@@ -32,7 +32,7 @@ namespace StockWeb.Data.Concreate.EFCore
         //}
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-           var ConnString= "Data Source = DESKTOP-L0539F8\\SQLEXPRESS; Database = StockWeb; Uid = sa;Pwd = 19951992";
+            var ConnString = "Data Source = engintest2020.database.windows.net; Database = StockWeb; Uid = engin;Pwd =_StockWeb";
             optionsBuilder.UseSqlServer(ConnString);
         }
 

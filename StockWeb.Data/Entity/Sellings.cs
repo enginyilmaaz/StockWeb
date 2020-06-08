@@ -19,7 +19,8 @@ namespace StockWeb.Data.Entity
         public string UserId { get; set; }
         public Users User { get; set; }
 
-
+        public int ProductId { get; set; }
+        public Products Product { get; set; }
         public bool isActive { get; set; }
 
     }

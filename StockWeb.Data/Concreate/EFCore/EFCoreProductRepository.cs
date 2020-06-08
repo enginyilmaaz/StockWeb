@@ -20,5 +20,49 @@ namespace StockWeb.Data.Concreate.EFCore
 
             }
         }
+        public List<Purchases> ListProductPurchases()
+        {
+            using (var context = new APPDBContext())
+            {
+                return context.Purchases.Include(i => i.Product)
+                    .Include(i => i.User).
+                    ToList();
+
+            }
+        }
+
+        public List<Sellings> ListProductSellings()
+        {
+            using (var context = new APPDBContext())
+            {
+                return context.Sellings.Include(i => i.Product)
+                    .Include(i => i.User).
+                    ToList();
+
+            }
+        }
+
+
+
+        public async void InsertStock(Purchases entity)
+        {
+            using (var context = new APPDBContext())
+            {
+                context.Purchases.Add(entity);
+                await context.SaveChangesAsync();
+
+            }
+        }
+
+
+        public async void RemoveStock(Sellings entity)
+        {
+            using (var context = new APPDBContext())
+            {
+                context.Sellings.Add(entity);
+                await context.SaveChangesAsync();
+
+            }
+        }
     }
 }

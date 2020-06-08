@@ -1,72 +1,76 @@
 ﻿@model Stock.Web.Models.Product.CreateProductViewModel
 
 @{
-    ViewData["Title"] = "Ürün Ekle";
+    ViewData["Title"] = "Ürün Ekle - Stock Web";
 }
+<div class="login-form ">
+    <div class="container">
+        <div class="row justify-content-center ">
+            <div class="col-md-7">
+                <div class="card shadow-lg">
+                    <div class="card-header text-center h5">Ürün Kaydı Oluştur</div>
+                    <div class="card-body">
+                        <form asp-action="CreateProduct" id="CreateProductForm" enctype="multipart/form-data">
 
+                            <div class="form-row">
+                                
+                                <div class="form-group col">
+                                    <label asp-for="Name" class="control-label"></label>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
 
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label asp-for="CategoryId" class="control-label"></label>
+                                    @Html.DropDownListFor(x => x.CategoryId, new SelectList(ViewBag.CategoryList, "Id", "CategoryName"), "Lütfen kategori seçiniz", new { @class = "form-control  form-control-chosen-required", data_container="body" , data_live_search="true",data_hide_disabled="true", required = "required" })
 
-<h1 class="text-center">Ürün Ekle</h1>
+                                </div>  <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
 
-<h4>Ürün Ekle</h4>
-<hr />
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label asp-for="PurchasePrice" class="control-label"></label>
+                                    <input asp-for="PurchasePrice" class="form-control" datatype="currency" />
+                                    <span asp-validation-for="PurchasePrice" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-1"></div>
+                                <div class="form-group col">
+                                    <label asp-for="SellingPrice" class="control-label"></label>
+                                    <input asp-for="SellingPrice" class="form-control" datatype="currency" />
+                                    <span asp-validation-for="SellingPrice" class="text-danger"></span>
+                                </div>
+                            </div>
 
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label asp-for="Quantity" class="control-label"></label>
+                                    <input asp-for="Quantity" class="form-control" datatype="positiveInt" />
+                                    <span asp-validation-for="Quantity" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-1"></div>
+                                <div class="form-group col">
+                                    <label asp-for="ImageUrl" class="control-label"></label>
+                                    <div class="custom-file mb-3">
+                                        <input type="hidden" id="ImageUrl" name="ImageUrl" value="null" />
+                                        <input type="file" class="custom-file-input form-control" id="ImageFile" name="ImageFile" accept="image/*" />
+                                        <label class="custom-file-label" data-browse="Gözat.." for="ImageFile"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row"></div>
+                            <button type="submit" class="btn btn-primary w-100">Ürün Ekle</button>
+                        </form>
+                    </div>
 
-<div class="mx-auto">
-    <form asp-action="CreateProduct" id="CreateProductForm" enctype="multipart/form-data">
-
-        <div class="form-row">
-
-            <div class="form-group col-md-6">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label asp-for="CategoryId" class="control-label"></label>
-                @Html.DropDownListFor(x => x.CategoryId, new SelectList(ViewBag.CategoryList, "Id", "CategoryName"), "Lütfen kategori seçiniz", new { @class = "form-control custom-select " })
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label asp-for="Quantity" class="control-label"></label>
-                <input asp-for="Quantity" class="form-control" datatype="uint"/>
-                <span asp-validation-for="Quantity" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-3 pr-5">
-                <label asp-for="PurchasePrice" class="control-label"></label>
-                <input asp-for="PurchasePrice" class="form-control" datatype="currency"/>
-                <span asp-validation-for="PurchasePrice" class="text-danger"></span>
-            </div>
-            <div class="form-group col-md-3">
-                <label asp-for="SellingPrice" class="control-label"></label>
-                <input asp-for="SellingPrice" class="form-control" datatype="currency"/>
-                <span asp-validation-for="SellingPrice" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label asp-for="ImageUrl" class="control-label"></label>
-                <div class="custom-file mb-3">
-                    <input type="hidden"  asp-for="ImageUrl"/>
-                    <input type="file" class="custom-file-input form-control" id="ImageFile" name="ImageFile" accept="image/*" />
-                    <label class="custom-file-label" data-browse="Gözat.." for="_ImageUrl"></label>
                 </div>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Ürün Ekle</button>
-    </form>
+    </div>
 </div>
-<div>
-    <a asp-action="Index">Back to List</a>
 
-</div>
+
 
 
 @section Scripts
@@ -74,17 +78,9 @@
 
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
-        var MinS1ellingPrice=10;
+        
 
-       
-        $("#PurchasePrice").keyup(function () {
-            
-            MinSellingPrice = parseInt($("#PurchasePrice").val());
 
-           
-        });
-var selectedID = @Html.Raw((ViewBag.aa));
-     
     $(function() {
         $("#CreateProductForm").validate({
 
@@ -92,13 +88,13 @@ var selectedID = @Html.Raw((ViewBag.aa));
             rules: {
                 Name: {
                     required: true,
-                
+
                 }
                 ,
                 SellingPrice: {
                     required: true,
                     number: true,
-                   
+
                 },
 
                PurchasePrice: {
@@ -108,7 +104,7 @@ var selectedID = @Html.Raw((ViewBag.aa));
                 ,
                 CategoryId: {
                     required: true,
-                
+
                 }
                 ,
                ImageFile:
@@ -129,8 +125,8 @@ var selectedID = @Html.Raw((ViewBag.aa));
                 }
                 ,
                  CategoryId: {
-                    required: "Bir kategori seçmelisiniz",
-                    
+                     required: "Boş bırakamazsınız",
+
                 }
                 ,
                 Quantity: {
@@ -150,9 +146,9 @@ var selectedID = @Html.Raw((ViewBag.aa));
                 }
 
                 ,
-                _ImageUrl: {
+                ImageFile: {
                     required: "Bir resim yüklemesiliniz",
-                   
+
                 }
             },
 
@@ -161,6 +157,6 @@ var selectedID = @Html.Raw((ViewBag.aa));
 });
     </script>
 
-
-
+  
+   
 }
