@@ -12,7 +12,9 @@ using Stock.Web.Models.Category;
 using Stock.Web.Models.Product;
 using Stock.Web.Models.Stocks;
 using StockWeb.Business.Abstract;
+using StockWeb.Business.ToastMessage;
 using StockWeb.Data.Entity;
+using StockWeb.Data.ToastMessages;
 
 namespace Stock.Web.Controllers
 {
@@ -141,9 +143,7 @@ namespace Stock.Web.Controllers
 
                 };
                 _productService.Create(product);
-                TempData["message-title"] = "İşlem Başarılı";
-                TempData["message-data"] = "Ürün ekleme başarılı";
-                TempData["message-type"] = "success";
+                ToastMessageSender.ShowMessage(this, "success", AdminMessages.CreateProductSuccess);
                 return RedirectToAction("ListProduct");
             }
 
@@ -192,9 +192,7 @@ namespace Stock.Web.Controllers
                 }; 
                 _categoryService.Create(category);
 
-                TempData["message-title"] = "İşlem Başarılı";
-                TempData["message-data"] = "Kategori ekleme başarılı";
-                TempData["message-type"] = "success";
+                ToastMessageSender.ShowMessage(this, "success", AdminMessages.CreateCategorySuccess);
                 return RedirectToAction("ListCategory");
             }
 
@@ -211,10 +209,7 @@ namespace Stock.Web.Controllers
                _categoryService.Delete(entity);
             }
 
-            TempData["message-title"] = "İşlem Başarılı";
-
-            TempData["message-data"] = "Seçilen kategori başarıyla silindi";
-            TempData["message-type"] = "success";
+            ToastMessageSender.ShowMessage(this, "success", AdminMessages.DeleteCategorySuccess);
             return RedirectToAction("ListCategory");
         }
 
@@ -231,9 +226,7 @@ namespace Stock.Web.Controllers
                 _productService.Delete(entity);
             }
 
-            TempData["message-title"] ="İşlem Başarılı";
-            TempData["message-data"] = "Seçilen ürün başarıyla silindi";
-            TempData["message-type"] = "success";
+            ToastMessageSender.ShowMessage(this, "success", AdminMessages.DeleteProductSuccess);
             return RedirectToAction("ListProduct");
         }
 
@@ -277,9 +270,7 @@ namespace Stock.Web.Controllers
 
                 _productService.Update(product);
 
-                TempData["message-title"] = "İşlem Başarılı";
-                TempData["message-data"] = "Stok girişi başarılı";
-                TempData["message-type"] = "success";
+                ToastMessageSender.ShowMessage(this, "success", AdminMessages.InsertStockSuccess);
                 return RedirectToAction("ListProduct");
             
             }
@@ -329,9 +320,7 @@ namespace Stock.Web.Controllers
                 _productService.RemoveStock(selling);
 
                 _productService.Update(product);
-                TempData["message-title"] = "İşlem Başarılı";
-                TempData["message-data"] = "Stok çıkış başarılı";
-                TempData["message-type"] = "success";
+                ToastMessageSender.ShowMessage(this, "success", AdminMessages.RemoveStockSuccess);
                 return RedirectToAction("ListProduct");
             }
 
@@ -386,10 +375,8 @@ namespace Stock.Web.Controllers
         
              _categoryService.Update(entity);
 
-            TempData["message-title"] = "İşlem Başarılı";
-            TempData["message-data"] = "Kategori güncelleme başarılı";
-            TempData["message-type"] = "success";
-            return RedirectToAction("ListCategory");
+             ToastMessageSender.ShowMessage(this, "success", AdminMessages.UpdateCategorySuccess);
+                return RedirectToAction("ListCategory");
 
 
             }
@@ -472,11 +459,9 @@ namespace Stock.Web.Controllers
                 
                         _productService.Update(entity);
 
-                
-                TempData["message-title"] = "İşlem Başarılı";
-                TempData["message-data"] = "Ürün güncelleme başarılı";
-                TempData["message-type"] = "success";
-                return RedirectToAction("ListProduct");
+
+            ToastMessageSender.ShowMessage(this, "success", AdminMessages.UpdateProductSuccess);
+            return RedirectToAction("ListProduct");
 
 
             

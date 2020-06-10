@@ -11,7 +11,7 @@ namespace Stock.Web.Controllers
 
     [Route("api")]
     [EnableCors("AnyToAll")]
-    public class APIController : Controller
+    public class APIController : ControllerBase
     {
         private readonly UserManager<Users> _userManager;
         private readonly IProductService _productService;
@@ -57,7 +57,33 @@ namespace Stock.Web.Controllers
             {
                 return BadRequest();
             }
+
         }
+
+
+
+
+
+
+
+        [Produces("application/json")]
+            [HttpGet("Account/ConfirmEmail/")]
+            public async Task<IActionResult> ConfirmEmail(string email)
+            {
+                try
+                {
+                    bool isNotExist = false;
+                    var user = await _userManager.FindByEmailAsync(email);
+                    if (user != null) isNotExist = true;
+                    return Ok(isNotExist);
+                }
+                catch
+                {
+                    return BadRequest();
+                }
+            }
+
+        
 
     }
 

@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using Stock.Web.EmailServices;
 using Stock.Web.Models.Account;
 using Stock.Web.Models.Product;
+using StockWeb.Business.ToastMessage;
+using StockWeb.Data.ToastMessages;
 using StockWeb.Data.Entity;
 
 namespace Stock.Web.Controllers
@@ -102,11 +104,12 @@ namespace Stock.Web.Controllers
 
                 });
                 var fullUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, url);
-                await _emailSender.SendEmailAsync(model.Email, "Hesap Onayı", $"<br/><br/>Hesabınızı onaylamak için lütfen <a href='{fullUrl}'>tıklayınız.</a>");
+                await _emailSender.SendEmailAsync(user.Email, "Hesap Onayı", $"<br/><br/>Hesabınızı onaylamak için lütfen <a href='{fullUrl}'>tıklayınız.</a>" +
+                                                                             $"<br><br> <b>Bilgilendirme:</b> Bu link {DateTime.Now.AddDays(2).ToString("MM/dd/yyyy HH:mm:ss")} tarihine kadar geçerlidir. Bu süreden sonra tekrar onay isteği göndermeniz gerekecektir.");
 
-                TempData["message-title"] = "İşlem Başarılı";
-                TempData["message-data"] = "Kayıt başarılı başarılı, giriş yapabilmek için epostanızı onaylayın. " ;
-                TempData["message-type"] = "success";
+
+
+                ToastMessageSender.ShowMessage(this, "success", AccountMessages.RegisterSuccess);
                 return RedirectToAction("Login", "Account");
             }
 
@@ -136,10 +139,16 @@ namespace Stock.Web.Controllers
 
             if (user.EmailConfirmed)
             {
-                TempData["message-title"] = "Bilgilendirme";
-                TempData["message-data"] = "Hesabınız zaten onaylı, giriş yapabilirsiniz.";
-                TempData["message-type"] = "info";
+                
+                ToastMessageSender.ShowMessage(this, "info", AccountMessages.AlreadyEmailConfirmed);
+                return RedirectToAction("Login", "Account");
+            }
+            if (!await this._userManager.VerifyUserTokenAsync(user,
+                _userManager.Options.Tokens.EmailConfirmationTokenProvider,
+                "EmailConfirmation", UserToken))
 
+            {
+                ToastMessageSender.ShowMessage(this, "danger", AccountMessages.ConfirmEmailInvalidToken);
                 return RedirectToAction("Login", "Account");
             }
             if (user != null)
@@ -150,9 +159,7 @@ namespace Stock.Web.Controllers
                     // cart objesini oluştur.
 
 
-                    TempData["message-title"] = "İşlem Başarılı";
-                    TempData["message-data"] = "Hesabınız onaylandı, giriş yapabilirsiniz.";
-                    TempData["message-type"] = "success";
+                    ToastMessageSender.ShowMessage(this, "success", AccountMessages.EmailConfirmSuccess);
 
                     return RedirectToAction("Login", "Account");
                 }
@@ -160,6 +167,36 @@ namespace Stock.Web.Controllers
             return RedirectToAction("ErrorOccured", "Admin");
 
 
+        }
+
+    
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmEmail(string email)
+        {
+            bool userExist=false;
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user.EmailConfirmed) return Ok("isConfirmed");
+            if (user!=null)
+            {
+
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var url = Url.Action("ConfirmEmail", "Account", new
+                {
+                    userId = user.Id,
+                    UserToken = code
+
+                });
+                var fullUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, url);
+                await _emailSender.SendEmailAsync(user.Email, "Hesap Onayı", $"<br/><br/>Hesabınızı onaylamak için lütfen <a href='{fullUrl}'>tıklayınız.</a>" + 
+                  $"<br><br> <b>Bilgilendirme:</b> Bu link {DateTime.Now.AddDays(2).ToString("MM/dd/yyyy HH:mm:ss")} tarihine kadar geçerlidir. Bu süreden sonra tekrar onay isteği göndermeniz gerekecektir.");
+                userExist = true;
+
+
+            }
+
+            return Ok(userExist);
         }
 
 
@@ -225,10 +262,7 @@ namespace Stock.Web.Controllers
             entity.UserName = model.UserDetailViewModel.Email;
 
              await _userManager.UpdateAsync(entity);
-
-             TempData["message-title"] = "İşlem Başarılı";
-             TempData["message-data"] = "Bilgi güncelleme başarılı";
-             TempData["message-type"] = "success";
+             ToastMessageSender.ShowMessage(this, "success", AccountMessages.EditAccountSuccess);
 
             return RedirectToAction("UserDetails");
         }
@@ -255,9 +289,7 @@ namespace Stock.Web.Controllers
 
             if (res.Succeeded)
             {
-                TempData["message-title"] = "İşlem Başarılı";
-                TempData["message-data"] = "Şifre değiştirme başarılı";
-                TempData["message-type"] = "success";
+                ToastMessageSender.ShowMessage(this, "success", AccountMessages.ChangePassSuccess);
                 return RedirectToAction("UserDetails");
             }
 
@@ -269,9 +301,7 @@ namespace Stock.Web.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                TempData["message-title"] = "Bilgi";
-                TempData["message-data"] = "Zaten giriş yapmış görünüyorsunuz, şifrenizi değiştirmek için hesabım bölümünden değiştirebilirsiniz..";
-                TempData["message-type"] = "warning";
+                ToastMessageSender.ShowMessage(this, "warning", AccountMessages.ForgotPassIsAuthenticated);
                 return View("UserDetails");
             }
 
@@ -289,9 +319,7 @@ namespace Stock.Web.Controllers
 
             if (user == null)
             {
-                TempData["message-title"] = "Hata";
-                TempData["message-data"] = "Böyle bir kullanıcı yok";
-                TempData["message-type"] = "danger";
+                ToastMessageSender.ShowMessage(this, "danger", AccountMessages.ForgotPassIsNotExistUser);
                 return View();
             }
 
@@ -303,23 +331,23 @@ namespace Stock.Web.Controllers
                 Token = code
             });
             var fullUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, url);
-            // email
-            await _emailSender.SendEmailAsync(Email, "Parola Sıfırla", $"<br><br>Parolanızı yenilemek için linke <a href='{fullUrl}'>tıklayınız.</a>");
-            TempData["message-title"] = "İşlem Başarılı";
-            TempData["message-data"] = "Şifre sıfırlama linki gönderildi. Lütfen eposta hesabınıza kontrol ediniz.";
-            TempData["message-type"] = "success";
-            return View();
+           
+            await _emailSender.SendEmailAsync(Email, "Parola Sıfırla", $"<br><br>Parolanızı yenilemek için linke <a href='{fullUrl}'>tıklayınız.</a>" + 
+             $"<br><br> <b>Bilgilendirme:</b> Bu link {DateTime.Now.AddHours(2).ToString("MM/dd/yyyy HH:mm:ss")} tarihine kadar geçerlidir. Bu süreden sonra tekrar şifre sıfırlama isteği göndermeniz gerekecektir.");
+            
+            ToastMessageSender.ShowMessage(this,"success", AccountMessages.ForgotPassEmailSendSuccess);
+
+
+             return View();
         }
 
 
 
-        public IActionResult ResetPass(string UserId, string Token)
+        public async Task<IActionResult> ResetPass(string UserId, string Token)
         {
             if (User.Identity.IsAuthenticated)
             {
-                TempData["message-title"] = "Bilgi";
-                TempData["message-data"] = "Zaten giriş yapmış görünüyorsunuz, şifrenizi değiştirmek için hesabım bölümünden değiştirebilirsiniz..";
-                TempData["message-type"] = "warning";
+                ToastMessageSender.ShowMessage(this, "warning", AccountMessages.ResetPassIsAuthenticated);
                 return View("UserDetails");
             }
             if (UserId == null || Token == null)
@@ -327,7 +355,20 @@ namespace Stock.Web.Controllers
                 return RedirectToAction("ErrorOccured", "Admin");
             }
 
-            var model = new UserResetPasswordModel
+            var user = await _userManager.FindByIdAsync(UserId);
+
+           
+            if (!await this._userManager.VerifyUserTokenAsync(user,
+                _userManager.Options.Tokens.PasswordResetTokenProvider,
+                "ResetPassword", Token))
+
+            {
+                ToastMessageSender.ShowMessage(this, "danger", AccountMessages.ResetPassInvalidToken);
+                return RedirectToAction("ForgotPassword", "Account");
+            }
+
+
+                var model = new UserResetPasswordModel
             {
                 _Token = Token,
                 _UserId = UserId
@@ -349,9 +390,7 @@ namespace Stock.Web.Controllers
             var user = await _userManager.FindByIdAsync(model._UserId);
             if (user == null)
             {
-                TempData["message-title"] = "Hata";
-                TempData["message-data"] = "Böyle bir kullanıcı yok";
-                TempData["message-type"] = "danger";
+                ToastMessageSender.ShowMessage(this, "warning", AccountMessages.ResetPassIsNotExistUser);
                 return RedirectToAction("Index", "Home");
             }
 
@@ -359,11 +398,10 @@ namespace Stock.Web.Controllers
 
             if (result.Succeeded)
             {
-                TempData["message-title"] = "Başarılı";
-                TempData["message-data"] = "Parolanız başarıyla güncellendi.";
-                TempData["message-type"] = "success";
+                ToastMessageSender.ShowMessage(this, "success", AccountMessages.ResetPassSuccess);
                 return RedirectToAction("Login", "Account");
             }
+         
 
             return View(model);
         }

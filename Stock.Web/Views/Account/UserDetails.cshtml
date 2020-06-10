@@ -162,8 +162,12 @@
                     url: url,
                     data: form.serialize(), // serializes the form's elements.
                     success: function (data) {
-                        $('#userPassUpdateToast').toast('show');
+                        $('#ConfirmEmailForm').each(function () {
+                            this.reset();
+                        });
                         $('#userPassUpdateModal').modal('hide');
+                        $('#userPassUpdateToast').toast('show');
+                     
                     }
                 });
 

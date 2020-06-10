@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -11,12 +13,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Stock.Web.EmailServices;
 using StockWeb.Business.Abstract;
 using StockWeb.Business.Concreate;
 using StockWeb.Data.Abstract;
 using StockWeb.Data.Concreate.EFCore;
 using StockWeb.Data.Entity;
+using StockWeb.Data.Identity;
 
 namespace Stock.Web
 {
@@ -26,7 +30,7 @@ namespace Stock.Web
         {
             Configuration = configuration;
         }
-
+      
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -34,8 +38,9 @@ namespace Stock.Web
         {
             services.AddDbContext<APPDBContext>();
             services.AddIdentity<Users, IdentityRole>().AddEntityFrameworkStores<APPDBContext>()
-                .AddDefaultTokenProviders();
-
+                .AddDefaultTokenProviders()
+                .AddTokenProvider<CustomResetPassTokenProvider<Users>>("CustomResetPass")
+                .AddTokenProvider<CustomConfirmEmailTokenProvider<Users>>("CustomConfirmEmail");
 
 
             services.AddCors(options =>
@@ -49,7 +54,11 @@ namespace Stock.Web
 
                     });
             });
+            services.Configure<CustomResetPassTokenProviderOptions>(o =>
+                o.TokenLifespan = TimeSpan.FromHours(2));
 
+            services.Configure<CustomConfirmEmailTokenProviderOptions>(o =>
+                o.TokenLifespan = TimeSpan.FromDays(3));
 
 
             services.Configure<IdentityOptions>(options => {
@@ -69,6 +78,8 @@ namespace Stock.Web
                 options.User.RequireUniqueEmail = true;
                 options.SignIn.RequireConfirmedEmail = true;
                 options.SignIn.RequireConfirmedPhoneNumber = false;
+                options.Tokens.PasswordResetTokenProvider = "CustomResetPass";
+                options.Tokens.EmailConfirmationTokenProvider = "CustomConfirmEmail";
             });
 
 
