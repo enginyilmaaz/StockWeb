@@ -41,12 +41,7 @@ namespace Stock.Web.Controllers
         }
 
 
-        public IActionResult ErrorOccured()
-        {
-
-            return View();
-        }
-
+       
 
 
         [Route("Admin/Products")]
@@ -147,7 +142,7 @@ namespace Stock.Web.Controllers
                 return RedirectToAction("ListProduct");
             }
 
-            return View("ErrorOccured");
+            return RedirectToAction("ErrorOccured","Home");
         }
 
 
@@ -196,7 +191,7 @@ namespace Stock.Web.Controllers
                 return RedirectToAction("ListCategory");
             }
 
-            return View("ErrorOccured");
+            return RedirectToAction("ErrorOccured", "Home");
         }
 
         [Route("Admin/Category/Delete/{id?}")]
@@ -275,9 +270,9 @@ namespace Stock.Web.Controllers
             
             }
 
-            return View("ErrorOccured");
+            return RedirectToAction("ErrorOccured", "Home");
 
-           
+
         }
 
 
@@ -324,10 +319,10 @@ namespace Stock.Web.Controllers
                 return RedirectToAction("ListProduct");
             }
 
-            return View("ErrorOccured");
+            return RedirectToAction("ErrorOccured", "Home");
 
-          
-           
+
+
         }
 
 
@@ -337,14 +332,14 @@ namespace Stock.Web.Controllers
         {
             if (id == null)
             {
-                View("ErrorOccured");
+                return RedirectToAction("ErrorOccured", "Home");
             }
 
             var entity = _categoryService.GetById((int)id);
 
             if (entity == null)
             {
-                View("ErrorOccured");
+                return RedirectToAction("ErrorOccured", "Home");
             }
 
             var model = new EditCategoryViewModel()
@@ -381,7 +376,7 @@ namespace Stock.Web.Controllers
 
             }
 
-            return View("ErrorOccured");
+            return RedirectToAction("ErrorOccured", "Home");
         }
 
 
@@ -392,14 +387,14 @@ namespace Stock.Web.Controllers
         {
             if (id == null)
             {
-                View("ErrorOccured");
+                return RedirectToAction("ErrorOccured", "Home");
             }
 
             var entity = _productService.GetById((int)id);
 
             if (entity == null)
             {
-                View("ErrorOccured");
+                return RedirectToAction("ErrorOccured", "Home");
             }
 
             var model = new EditProductViewModel()

@@ -133,7 +133,7 @@ namespace Stock.Web.Controllers
 
         public async Task<IActionResult> ConfirmEmail(string UserId, string UserToken)
         {
-            if(UserId==null || UserToken==null) return RedirectToAction("ErrorOccured", "Admin");
+            if(UserId==null || UserToken==null) return RedirectToAction("ErrorOccured", "Home");
 
             var user = await _userManager.FindByIdAsync(UserId);
 
@@ -164,7 +164,7 @@ namespace Stock.Web.Controllers
                     return RedirectToAction("Login", "Account");
                 }
             }
-            return RedirectToAction("ErrorOccured", "Admin");
+            return RedirectToAction("ErrorOccured", "Home");
 
 
         }
@@ -172,6 +172,7 @@ namespace Stock.Web.Controllers
     
 
         [HttpPost]
+        
         public async Task<IActionResult> ConfirmEmail(string email)
         {
             bool userExist=false;
@@ -212,7 +213,7 @@ namespace Stock.Web.Controllers
 
             if (entity == null)
             {
-               return RedirectToAction("ErrorOccured", "Admin");
+                return RedirectToAction("ErrorOccured", "Home");
             }
 
             var model = new UserViewModel()
@@ -251,7 +252,7 @@ namespace Stock.Web.Controllers
 
             if (entity == null)
             {
-                return RedirectToAction("ErrorOccured", "Admin");
+                return RedirectToAction("ErrorOccured", "Home");
             }
 
 
@@ -280,7 +281,7 @@ namespace Stock.Web.Controllers
 
             if (entity == null)
             {
-                return RedirectToAction("ErrorOccured", "Admin");
+                return RedirectToAction("ErrorOccured", "Home");
             }
 
             var newPassword = _userManager.PasswordHasher.HashPassword(entity, model.ChangePassViewModel.Password);
@@ -293,7 +294,7 @@ namespace Stock.Web.Controllers
                 return RedirectToAction("UserDetails");
             }
 
-           return RedirectToAction("ErrorOccured", "Admin");
+            return RedirectToAction("ErrorOccured", "Home");
         }
 
 
@@ -352,7 +353,7 @@ namespace Stock.Web.Controllers
             }
             if (UserId == null || Token == null)
             {
-                return RedirectToAction("ErrorOccured", "Admin");
+                return RedirectToAction("ErrorOccured", "Home");
             }
 
             var user = await _userManager.FindByIdAsync(UserId);
