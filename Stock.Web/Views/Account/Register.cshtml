@@ -94,7 +94,7 @@
         $(function () {
             $("#regForm").validate({
 
-
+                onkeyup: function (element) { $(element).valid() },
                 rules: {
                     FirstName: {
                         required: true,
