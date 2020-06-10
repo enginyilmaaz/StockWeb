@@ -108,7 +108,19 @@
                     }
                     , Email: {
                         required: true,
-                        email: true
+                        email: true,
+
+                        remote:
+                        {
+                            url: '/api/Account/CheckNotRegisteredbyEmail',
+                            type: "get",
+                            data:
+                            {
+                                email: function () {
+                                    return $('#Email').val();
+                                }
+                            }
+                        }
 
                     },
                     Password: {
@@ -137,7 +149,8 @@
                     }
                     , Email: {
                         required: "Boş bırakamazsınız",
-                        email: "Email formatı hatalı"
+                        email: "Email formatı hatalı",
+                        remote: "Bu eposta adresi zaten kullanılıyor"
 
                     },
                     Password: {

@@ -38,7 +38,17 @@ namespace Stock.Web
 
 
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: "AnyToAll",
+                    builder =>
+                    {
+                        builder.AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowAnyOrigin();
 
+                    });
+            });
 
 
 
@@ -112,7 +122,7 @@ namespace Stock.Web
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseRouting();
-
+            app.UseCors();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

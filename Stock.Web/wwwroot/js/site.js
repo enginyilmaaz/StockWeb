@@ -3,7 +3,7 @@
 
 // Write your JavaScript code.
 $(document).ready(function () {
-    $('[data-toggle="popover"]').popover();
+    $('[data-toggle="popover"]').popover({ trigger: "hover" });
 });
 $('.popover-dismiss').popover({
     trigger: 'focus'

@@ -1,23 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StockWeb.Business.Abstract;
+using StockWeb.Data.Entity;
 
 namespace Stock.Web.Controllers
 {
 
-    [Route("api")] 
+    [Route("api")]
+    [EnableCors("AnyToAll")]
     public class APIController : Controller
     {
-        private IProductService _productService;
-        public APIController(IProductService productService)
+        private readonly UserManager<Users> _userManager;
+        private readonly IProductService _productService;
+        public APIController(IProductService productService, UserManager<Users> userManager)
         {
             _productService = productService;
-
+            _userManager = userManager;
         }
 
 
@@ -40,6 +41,23 @@ namespace Stock.Web.Controllers
             }
         }
 
+
+        [Produces("application/json")]
+        [HttpGet("Account/CheckNotRegisteredbyEmail/")]
+        public async Task<IActionResult> GetStockQuantity(string email)
+        {
+            try
+            {
+                bool isNotExist = true;
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user != null) isNotExist = false;
+                return Ok(isNotExist);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
 
     }
 
