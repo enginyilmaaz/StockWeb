@@ -1,13 +1,10 @@
-﻿using System;
+﻿using StockWeb.Data.Entity;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using StockWeb.Data.Entity;
 
 namespace Stock.Web.Models.Product
 {
     public class SellingListViewModel
     {
-        public List<Sellings> Sellings{ get; set; }
+        public List<Sellings> Sellings { get; set; }
     }
 }

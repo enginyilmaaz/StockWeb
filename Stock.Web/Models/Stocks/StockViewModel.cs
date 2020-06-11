@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using StockWeb.Data.Entity;
 
 namespace Stock.Web.Models.Stocks
 {
@@ -26,8 +21,8 @@ namespace Stock.Web.Models.Stocks
         [Required(ErrorMessage = "Bu alanı boş bırakamazsınız")]
         public double TotalPrice { get; set; }
 
-       
 
-    
+
+
     }
 }

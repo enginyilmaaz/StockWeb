@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Stock.Web.Models.Category;
 using Stock.Web.Models.Product;
 using Stock.Web.Models.Stocks;
@@ -15,16 +9,19 @@ using StockWeb.Business.Abstract;
 using StockWeb.Business.ToastMessage;
 using StockWeb.Data.Entity;
 using StockWeb.Data.ToastMessages;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Stock.Web.Controllers
 {
     [Authorize]
     public class AdminController : Controller
     {
-      
-        private IProductService _productService;
-        private ICategoryService _categoryService;
-        private UserManager<Users> _userManager;
+
+        private readonly IProductService _productService;
+        private readonly ICategoryService _categoryService;
+        private readonly UserManager<Users> _userManager;
         public AdminController(IProductService productService, ICategoryService categoryService, UserManager<Users> userManager)
         {
             _productService = productService;
@@ -41,16 +38,16 @@ namespace Stock.Web.Controllers
         }
 
 
-       
+
 
 
         [Route("Admin/Products")]
         public IActionResult ListProduct()
         {
-           
+
             return View(new ProductListViewModel()
             {
-            Products = _productService.GetAllWithCategories()
+                Products = _productService.GetAllWithCategories()
             });
 
         }
@@ -62,7 +59,7 @@ namespace Stock.Web.Controllers
 
             return View(new PurchaseListViewModel()
             {
-                Purchases =_productService.ListProductPurchases()
+                Purchases = _productService.ListProductPurchases()
             });
 
         }
@@ -86,7 +83,7 @@ namespace Stock.Web.Controllers
         [HttpGet]
         public IActionResult CreateProduct()
         {
-           
+
             ViewBag.CategoryList = _categoryService.GetAll();
             return View();
 
@@ -98,8 +95,8 @@ namespace Stock.Web.Controllers
         {
 
 
-           
-                
+
+
 
             if (ModelState.IsValid)
             {
@@ -107,16 +104,16 @@ namespace Stock.Web.Controllers
                 if (ImageFile != null)
 
                 {
-                 
-                    var getExtension = Path.GetExtension(ImageFile.FileName);
-                    var fileName = string.Format($"{Guid.NewGuid()}{getExtension}");
+
+                    string getExtension = Path.GetExtension(ImageFile.FileName);
+                    string fileName = string.Format($"{Guid.NewGuid()}{getExtension}");
                     _ImageUrl = "Uploads\\ProductImages\\" + fileName;
-                  
-                    var path = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot", _ImageUrl);
+
+                    string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", _ImageUrl);
                     Directory.CreateDirectory(Path.GetDirectoryName(path));
 
 
-                    using (var stream = new FileStream(path, FileMode.Create))
+                    using (FileStream stream = new FileStream(path, FileMode.Create))
                     {
 
                         await ImageFile.CopyToAsync(stream);
@@ -125,7 +122,7 @@ namespace Stock.Web.Controllers
 
 
 
-                var product = new Products
+                Products product = new Products
                 {
                     CategoryId = model.CategoryId,
                     Name = model.Name,
@@ -142,7 +139,7 @@ namespace Stock.Web.Controllers
                 return RedirectToAction("ListProduct");
             }
 
-            return RedirectToAction("ErrorOccured","Home");
+            return RedirectToAction("ErrorOccured", "Home");
         }
 
 
@@ -160,15 +157,15 @@ namespace Stock.Web.Controllers
         [HttpGet]
         public IActionResult CreateCategory()
         {
-          
-           
+
+
             return View();
 
         }
 
         [Route("Admin/Create/Category")]
         [HttpPost]
-        public  IActionResult CreateCategory(CreateCategoryViewModel model)
+        public IActionResult CreateCategory(CreateCategoryViewModel model)
         {
 
 
@@ -177,14 +174,14 @@ namespace Stock.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                var category= new Categories
+                Categories category = new Categories
                 {
-                   CategoryName = model.CategoryName,
-                   isActive = true
+                    CategoryName = model.CategoryName,
+                    isActive = true
 
 
 
-                }; 
+                };
                 _categoryService.Create(category);
 
                 ToastMessageSender.ShowMessage(this, "success", AdminMessages.CreateCategorySuccess);
@@ -197,11 +194,11 @@ namespace Stock.Web.Controllers
         [Route("Admin/Category/Delete/{id?}")]
         public IActionResult DeleteCategory(int id)
         {
-            var entity = _categoryService.GetById(id);
+            Categories entity = _categoryService.GetById(id);
 
             if (entity != null)
             {
-               _categoryService.Delete(entity);
+                _categoryService.Delete(entity);
             }
 
             ToastMessageSender.ShowMessage(this, "success", AdminMessages.DeleteCategorySuccess);
@@ -214,7 +211,7 @@ namespace Stock.Web.Controllers
         [Route("Admin/Product/Delete/{id?}")]
         public IActionResult DeleteProduct(int id)
         {
-            var entity = _productService.GetById(id);
+            Products entity = _productService.GetById(id);
 
             if (entity != null)
             {
@@ -240,15 +237,15 @@ namespace Stock.Web.Controllers
         [HttpPost]
         public IActionResult InsertStock(StockViewModel model)
         {
-            
+
 
             if (ModelState.IsValid)
             {
-                var userId = _userManager.GetUserId(User);
-                var product = _productService.GetById(model.ProductId);
+                string userId = _userManager.GetUserId(User);
+                Products product = _productService.GetById(model.ProductId);
                 product.Quantity += model.Quantity;
                 Console.WriteLine(product.Id);
-                var purchase = new Purchases
+                Purchases purchase = new Purchases
                 {
                     OperationTime = DateTime.Now,
                     UserId = userId,
@@ -257,7 +254,7 @@ namespace Stock.Web.Controllers
                     PiecePrice = model.PiecePrice,
                     TotalPrice = model.TotalPrice,
                     ProductId = model.ProductId
-                    
+
 
 
                 };
@@ -267,7 +264,7 @@ namespace Stock.Web.Controllers
 
                 ToastMessageSender.ShowMessage(this, "success", AdminMessages.InsertStockSuccess);
                 return RedirectToAction("ListProduct");
-            
+
             }
 
             return RedirectToAction("ErrorOccured", "Home");
@@ -295,11 +292,11 @@ namespace Stock.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                var userId = _userManager.GetUserId(User);
-                var product = _productService.GetById(model.ProductId);
+                string userId = _userManager.GetUserId(User);
+                Products product = _productService.GetById(model.ProductId);
                 product.Quantity -= model.Quantity;
                 Console.WriteLine(product.Id);
-                var selling = new Sellings()
+                Sellings selling = new Sellings()
                 {
                     OperationTime = DateTime.Now,
                     UserId = userId,
@@ -335,17 +332,17 @@ namespace Stock.Web.Controllers
                 return RedirectToAction("ErrorOccured", "Home");
             }
 
-            var entity = _categoryService.GetById((int)id);
+            Categories entity = _categoryService.GetById((int)id);
 
             if (entity == null)
             {
                 return RedirectToAction("ErrorOccured", "Home");
             }
 
-            var model = new EditCategoryViewModel()
+            EditCategoryViewModel model = new EditCategoryViewModel()
             {
-               Id = entity.Id,
-               CategoryName = entity.CategoryName
+                Id = entity.Id,
+                CategoryName = entity.CategoryName
 
             };
 
@@ -359,18 +356,18 @@ namespace Stock.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var entity = _categoryService.GetById(model.Id);
-            if (entity == null)
-            {
-                return NotFound();
-            }
+                Categories entity = _categoryService.GetById(model.Id);
+                if (entity == null)
+                {
+                    return NotFound();
+                }
 
-            entity.CategoryName = model.CategoryName;
-            
-        
-             _categoryService.Update(entity);
+                entity.CategoryName = model.CategoryName;
 
-             ToastMessageSender.ShowMessage(this, "success", AdminMessages.UpdateCategorySuccess);
+
+                _categoryService.Update(entity);
+
+                ToastMessageSender.ShowMessage(this, "success", AdminMessages.UpdateCategorySuccess);
                 return RedirectToAction("ListCategory");
 
 
@@ -390,24 +387,24 @@ namespace Stock.Web.Controllers
                 return RedirectToAction("ErrorOccured", "Home");
             }
 
-            var entity = _productService.GetById((int)id);
+            Products entity = _productService.GetById((int)id);
 
             if (entity == null)
             {
                 return RedirectToAction("ErrorOccured", "Home");
             }
 
-            var model = new EditProductViewModel()
+            EditProductViewModel model = new EditProductViewModel()
             {
                 ProductId = entity.Id,
                 Name = entity.Name,
                 ImageUrl = entity.ImageUrl,
-               
-              
+
+
                 SellingPrice = entity.SellingPrice,
                 PurchasePrice = entity.PurchasePrice,
                 CategoryId = entity.CategoryId
-               
+
             };
 
             ViewBag.CategoryList = _categoryService.GetAll();
@@ -419,48 +416,48 @@ namespace Stock.Web.Controllers
 
         [Route("Admin/Product/Edit/{id?}")]
         [HttpPost]
-        public async Task<IActionResult> ProductEdit(EditProductViewModel model,  IFormFile ImageFile)
+        public async Task<IActionResult> ProductEdit(EditProductViewModel model, IFormFile ImageFile)
         {
-            
-                var entity = _productService.GetById(model.ProductId);
-                if (entity == null)
-                {
-                    return NotFound();
-                }
-                entity.Name = model.Name;
-                entity.PurchasePrice = model.PurchasePrice;
-               
-                entity.CategoryId = model.CategoryId;
-                entity.SellingPrice = model.SellingPrice;
+
+            Products entity = _productService.GetById(model.ProductId);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            entity.Name = model.Name;
+            entity.PurchasePrice = model.PurchasePrice;
+
+            entity.CategoryId = model.CategoryId;
+            entity.SellingPrice = model.SellingPrice;
             if (ImageFile != null)
 
-                {
+            {
 
-                    var getExtension = Path.GetExtension(ImageFile.FileName);
-                    var fileName = string.Format($"{Guid.NewGuid()}{getExtension}");
+                string getExtension = Path.GetExtension(ImageFile.FileName);
+                string fileName = string.Format($"{Guid.NewGuid()}{getExtension}");
                 string _ImageUrl = "Uploads\\ProductImages\\" + fileName;
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", _ImageUrl);
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", _ImageUrl);
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
                 entity.ImageUrl = _ImageUrl;
 
-                using (var stream = new FileStream(path, FileMode.Create))
-                    {
+                using (FileStream stream = new FileStream(path, FileMode.Create))
+                {
 
-                        await ImageFile.CopyToAsync(stream);
-                    }
+                    await ImageFile.CopyToAsync(stream);
                 }
+            }
             else { entity.ImageUrl = model.ImageUrl; }
 
-                
-                        _productService.Update(entity);
+
+            _productService.Update(entity);
 
 
             ToastMessageSender.ShowMessage(this, "success", AdminMessages.UpdateProductSuccess);
             return RedirectToAction("ListProduct");
 
 
-            
-            
+
+
         }
 
 

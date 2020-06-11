@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 
 namespace StockWeb.Data.Identity
 {
@@ -12,7 +9,7 @@ namespace StockWeb.Data.Identity
         {
             Name = "CustomConfirmEmailTokenProvider";
             TokenLifespan = TimeSpan.FromDays(7);
-        } 
-    
+        }
+
     }
 }

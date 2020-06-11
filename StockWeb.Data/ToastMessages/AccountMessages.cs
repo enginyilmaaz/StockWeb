@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace StockWeb.Data.ToastMessages
+﻿namespace StockWeb.Data.ToastMessages
 {
     public class AccountMessages
     {

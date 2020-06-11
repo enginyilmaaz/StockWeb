@@ -1,8 +1,5 @@
 ﻿using StockWeb.Data.Entity;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace StockWeb.Business.Abstract
 {
@@ -22,7 +19,7 @@ namespace StockWeb.Business.Abstract
 
         void InsertStock(Purchases entity);
         void RemoveStock(Sellings entity);
-         List<Purchases> ListProductPurchases();
-         List<Sellings> ListProductSellings();
+        List<Purchases> ListProductPurchases();
+        List<Sellings> ListProductSellings();
     }
 }

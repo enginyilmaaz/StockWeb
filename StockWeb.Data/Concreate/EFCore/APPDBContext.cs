@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using StockWeb.Data.Entity;
 
 namespace StockWeb.Data.Concreate.EFCore
 {
     public class APPDBContext : IdentityDbContext<Users>
     {
-        
+
 
         public DbSet<Categories> Categories { get; set; }
         public DbSet<Products> Products { get; set; }
@@ -32,7 +25,7 @@ namespace StockWeb.Data.Concreate.EFCore
         //}
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var ConnString = "Data Source = engintest2020.database.windows.net; Database = StockWeb; Uid = engin;Pwd =_StockWeb";
+            string ConnString = "Data Source = engintest2020.database.windows.net; Database = StockWeb; Uid = engin;Pwd =_StockWeb";
             optionsBuilder.UseSqlServer(ConnString);
         }
 

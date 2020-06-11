@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace StockWeb.Data.ToastMessages
+﻿namespace StockWeb.Data.ToastMessages
 {
     public class AdminMessages
     {
@@ -12,7 +7,7 @@ namespace StockWeb.Data.ToastMessages
 
         public static readonly string CreateCategorySuccess = "Kategori ekleme başarılı";
 
-        
+
 
         public static readonly string DeleteProductSuccess = "Seçilen ürün başarıyla silindi";
 
@@ -21,7 +16,7 @@ namespace StockWeb.Data.ToastMessages
         public static readonly string InsertStockSuccess = "Stok girişi başarılı";
         public static readonly string RemoveStockSuccess =
             "Stok çıkışı başarılı";
-           
+
 
 
         public static readonly string UpdateProductSuccess = "Ürün güncelleme başarılı";
@@ -29,7 +24,7 @@ namespace StockWeb.Data.ToastMessages
         public static readonly string UpdateCategorySuccess =
             "Kategori güncelleme başarılı";
 
-        
+
 
 
     }

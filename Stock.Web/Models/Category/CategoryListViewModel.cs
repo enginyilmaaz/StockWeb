@@ -1,8 +1,5 @@
-﻿using System;
+﻿using StockWeb.Data.Entity;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using StockWeb.Data.Entity;
 
 namespace Stock.Web.Models.Category
 {

@@ -1,19 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Stock.Web.EmailServices;
 using StockWeb.Business.Abstract;
 using StockWeb.Business.Concreate;
@@ -21,6 +12,7 @@ using StockWeb.Data.Abstract;
 using StockWeb.Data.Concreate.EFCore;
 using StockWeb.Data.Entity;
 using StockWeb.Data.Identity;
+using System;
 
 namespace Stock.Web
 {
@@ -30,7 +22,7 @@ namespace Stock.Web
         {
             Configuration = configuration;
         }
-      
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -61,9 +53,10 @@ namespace Stock.Web
                 o.TokenLifespan = TimeSpan.FromDays(3));
 
 
-            services.Configure<IdentityOptions>(options => {
+            services.Configure<IdentityOptions>(options =>
+            {
                 // password
-                options.Password.RequireDigit =false;
+                options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 6;
@@ -89,11 +82,11 @@ namespace Stock.Web
                 options.LogoutPath = "/Account/Logout";
                 options.AccessDeniedPath = "/Account/AccessDenied";
                 options.SlidingExpiration = true;
-                options.ExpireTimeSpan=TimeSpan.FromDays(7);
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
                 options.Cookie = new CookieBuilder
                 {
                     HttpOnly = true,
-                    Name=".StockWeb.UserCookie"
+                    Name = ".StockWeb.UserCookie"
                 };
 
 
@@ -143,7 +136,7 @@ namespace Stock.Web
                     pattern: "{controller=Account}/{action=Login}/{id?}");
 
 
-              
+
 
 
 

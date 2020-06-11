@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using StockWeb.Business.Abstract;
+﻿using StockWeb.Business.Abstract;
 using StockWeb.Data.Abstract;
 using StockWeb.Data.Entity;
+using System.Collections.Generic;
 
 namespace StockWeb.Business.Concreate
 {
-    public class CategoryManager: ICategoryService
+    public class CategoryManager : ICategoryService
     {
-        private ICategoryRepository _categoryRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
         public CategoryManager(ICategoryRepository categoryRepository)
         {
@@ -44,7 +41,7 @@ namespace StockWeb.Business.Concreate
         {
             _categoryRepository.Update(entity);
         }
-     
+
 
     }
 }

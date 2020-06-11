@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace StockWeb.Data.Abstract
 {
@@ -12,9 +9,9 @@ namespace StockWeb.Data.Abstract
 
         List<T> GetAll();
 
-        void  Create(T entity);
+        void Create(T entity);
 
-         void Update(T entity);
+        void Update(T entity);
 
         void Delete(T entity);
 

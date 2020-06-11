@@ -1,10 +1,10 @@
 ﻿
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StockWeb.Business.Abstract;
 using StockWeb.Data.Entity;
+using System.Threading.Tasks;
 
 namespace Stock.Web.Controllers
 {
@@ -23,7 +23,7 @@ namespace Stock.Web.Controllers
 
 
 
-        
+
 
         [Produces("application/json")]
         [HttpGet("Product/GetStockQuantity/{id}")]
@@ -31,9 +31,9 @@ namespace Stock.Web.Controllers
         {
             try
             {
-                var product = _productService.GetById(id);
+                Products product = _productService.GetById(id);
 
-                return Ok(product); 
+                return Ok(product);
             }
             catch
             {
@@ -49,8 +49,12 @@ namespace Stock.Web.Controllers
             try
             {
                 bool isNotExist = true;
-                var user = await _userManager.FindByEmailAsync(email);
-                if (user != null) isNotExist = false;
+                Users user = await _userManager.FindByEmailAsync(email);
+                if (user != null)
+                {
+                    isNotExist = false;
+                }
+
                 return Ok(isNotExist);
             }
             catch
@@ -67,23 +71,27 @@ namespace Stock.Web.Controllers
 
 
         [Produces("application/json")]
-            [HttpGet("Account/ConfirmEmail/")]
-            public async Task<IActionResult> ConfirmEmail(string email)
+        [HttpGet("Account/ConfirmEmail/")]
+        public async Task<IActionResult> ConfirmEmail(string email)
+        {
+            try
             {
-                try
+                bool isNotExist = false;
+                Users user = await _userManager.FindByEmailAsync(email);
+                if (user != null)
                 {
-                    bool isNotExist = false;
-                    var user = await _userManager.FindByEmailAsync(email);
-                    if (user != null) isNotExist = true;
-                    return Ok(isNotExist);
+                    isNotExist = true;
                 }
-                catch
-                {
-                    return BadRequest();
-                }
-            }
 
-        
+                return Ok(isNotExist);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+
 
     }
 

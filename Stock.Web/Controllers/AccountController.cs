@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Stock.Web.EmailServices;
 using Stock.Web.Models.Account;
-using Stock.Web.Models.Product;
 using StockWeb.Business.ToastMessage;
-using StockWeb.Data.ToastMessages;
 using StockWeb.Data.Entity;
+using StockWeb.Data.ToastMessages;
+using System;
+using System.Threading.Tasks;
 
 namespace Stock.Web.Controllers
 {
     public class AccountController : Controller
     {
-        private UserManager<Users> _userManager;
-        private SignInManager<Users> _signInManager;
-        private IEmailSender _emailSender;
+        private readonly UserManager<Users> _userManager;
+        private readonly SignInManager<Users> _signInManager;
+        private readonly IEmailSender _emailSender;
         public AccountController(UserManager<Users> userManager, SignInManager<Users> signInManager, IEmailSender emailSender)
         {
             _signInManager = signInManager;
@@ -35,14 +31,18 @@ namespace Stock.Web.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-          if(User.Identity.IsAuthenticated) return RedirectToAction("Index", "Admin");
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Login(AccountLoginViewModel model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            Users user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 ModelState.AddModelError("", "Bu kullanıcı adı ile daha önce hesap oluşturulmamış");
@@ -55,7 +55,7 @@ namespace Stock.Web.Controllers
                     ModelState.AddModelError("", "Lütfen email hesabınıza gelen link ile üyeliğinizi onaylayınız.");
                     return View();
                 }
-                var result = await _signInManager.PasswordSignInAsync(user, model.Password, true,false);
+                Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(user, model.Password, true, false);
 
                 if (result.Succeeded)
                 {
@@ -63,7 +63,7 @@ namespace Stock.Web.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("","Hatalı eposta yada şifre");
+                    ModelState.AddModelError("", "Hatalı eposta yada şifre");
                 }
 
 
@@ -82,28 +82,28 @@ namespace Stock.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(AccountRegisterViewModel model)
         {
-            var user = new Users()
+            Users user = new Users()
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Email = model.Email,
-                UserName =model.Email,
+                UserName = model.Email,
                 isActive = true,
 
             };
-            var result = await _userManager.CreateAsync(user, model.Password);
+            IdentityResult result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
 
-                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var url = Url.Action("ConfirmEmail", "Account", new
+                string code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                string url = Url.Action("ConfirmEmail", "Account", new
                 {
                     userId = user.Id,
                     UserToken = code
 
                 });
-                var fullUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, url);
+                string fullUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, url);
                 await _emailSender.SendEmailAsync(user.Email, "Hesap Onayı", $"<br/><br/>Hesabınızı onaylamak için lütfen <a href='{fullUrl}'>tıklayınız.</a>" +
                                                                              $"<br><br> <b>Bilgilendirme:</b> Bu link {DateTime.UtcNow.AddHours(3).AddDays(2).ToString("MM/dd/yyyy HH:mm:ss")} tarihine kadar geçerlidir. Bu süreden sonra tekrar onay isteği göndermeniz gerekecektir.");
 
@@ -116,34 +116,37 @@ namespace Stock.Web.Controllers
             return View();
         }
 
-      
 
 
-      
+
+
         public async Task<IActionResult> Logout()
         {
 
             await _signInManager.SignOutAsync();
 
-             return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home");
 
-  
+
         }
 
 
         public async Task<IActionResult> ConfirmEmail(string UserId, string UserToken)
         {
-            if(UserId==null || UserToken==null) return RedirectToAction("ErrorOccured", "Home");
+            if (UserId == null || UserToken == null)
+            {
+                return RedirectToAction("ErrorOccured", "Home");
+            }
 
-            var user = await _userManager.FindByIdAsync(UserId);
+            Users user = await _userManager.FindByIdAsync(UserId);
 
             if (user.EmailConfirmed)
             {
-                
+
                 ToastMessageSender.ShowMessage(this, "info", AccountMessages.AlreadyEmailConfirmed);
                 return RedirectToAction("Login", "Account");
             }
-            if (!await this._userManager.VerifyUserTokenAsync(user,
+            if (!await _userManager.VerifyUserTokenAsync(user,
                 _userManager.Options.Tokens.EmailConfirmationTokenProvider,
                 "EmailConfirmation", UserToken))
 
@@ -153,7 +156,7 @@ namespace Stock.Web.Controllers
             }
             if (user != null)
             {
-                var result = await _userManager.ConfirmEmailAsync(user, UserToken);
+                IdentityResult result = await _userManager.ConfirmEmailAsync(user, UserToken);
                 if (result.Succeeded)
                 {
                     // cart objesini oluştur.
@@ -169,28 +172,32 @@ namespace Stock.Web.Controllers
 
         }
 
-    
+
 
         [HttpPost]
-        
+
         public async Task<IActionResult> ConfirmEmail(string email)
         {
-            bool userExist=false;
-            var user = await _userManager.FindByEmailAsync(email);
+            bool userExist = false;
+            Users user = await _userManager.FindByEmailAsync(email);
 
-            if (user.EmailConfirmed) return Ok("isConfirmed");
-            if (user!=null)
+            if (user.EmailConfirmed)
+            {
+                return Ok("isConfirmed");
+            }
+
+            if (user != null)
             {
 
-                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var url = Url.Action("ConfirmEmail", "Account", new
+                string code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                string url = Url.Action("ConfirmEmail", "Account", new
                 {
                     userId = user.Id,
                     UserToken = code
 
                 });
-                var fullUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, url);
-                await _emailSender.SendEmailAsync(user.Email, "Hesap Onayı", $"<br/><br/>Hesabınızı onaylamak için lütfen <a href='{fullUrl}'>tıklayınız.</a>" + 
+                string fullUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, url);
+                await _emailSender.SendEmailAsync(user.Email, "Hesap Onayı", $"<br/><br/>Hesabınızı onaylamak için lütfen <a href='{fullUrl}'>tıklayınız.</a>" +
                   $"<br><br> <b>Bilgilendirme:</b> Bu link {DateTime.UtcNow.AddHours(3).AddDays(2).ToString("MM/dd/yyyy HH:mm:ss")} tarihine kadar geçerlidir. Bu süreden sonra tekrar onay isteği göndermeniz gerekecektir.");
                 userExist = true;
 
@@ -209,16 +216,16 @@ namespace Stock.Web.Controllers
         {
 
 
-            var entity = await _userManager.GetUserAsync(User);
+            Users entity = await _userManager.GetUserAsync(User);
 
             if (entity == null)
             {
                 return RedirectToAction("ErrorOccured", "Home");
             }
 
-            var model = new UserViewModel()
+            UserViewModel model = new UserViewModel()
             {
-               
+
                 UserDetailViewModel = new UserDetailViewModel()
                 {
                     Email = entity.Email,
@@ -226,12 +233,12 @@ namespace Stock.Web.Controllers
                     LastName = entity.LastName
                 },
 
-             
+
 
             };
 
 
-           
+
 
             return View(model);
         }
@@ -240,7 +247,7 @@ namespace Stock.Web.Controllers
 
 
 
-        
+
         [Route("Account/Details")]
         [HttpPost]
         [Authorize]
@@ -248,7 +255,7 @@ namespace Stock.Web.Controllers
         {
 
 
-            var entity = await _userManager.GetUserAsync(User);
+            Users entity = await _userManager.GetUserAsync(User);
 
             if (entity == null)
             {
@@ -262,8 +269,8 @@ namespace Stock.Web.Controllers
             entity.Email = model.UserDetailViewModel.Email;
             entity.UserName = model.UserDetailViewModel.Email;
 
-             await _userManager.UpdateAsync(entity);
-             ToastMessageSender.ShowMessage(this, "success", AccountMessages.EditAccountSuccess);
+            await _userManager.UpdateAsync(entity);
+            ToastMessageSender.ShowMessage(this, "success", AccountMessages.EditAccountSuccess);
 
             return RedirectToAction("UserDetails");
         }
@@ -277,16 +284,16 @@ namespace Stock.Web.Controllers
         {
 
 
-            var entity = await _userManager.GetUserAsync(User);
+            Users entity = await _userManager.GetUserAsync(User);
 
             if (entity == null)
             {
                 return RedirectToAction("ErrorOccured", "Home");
             }
 
-            var newPassword = _userManager.PasswordHasher.HashPassword(entity, model.ChangePassViewModel.Password);
-           entity.PasswordHash = newPassword;
-            var res = await _userManager.UpdateAsync(entity);
+            string newPassword = _userManager.PasswordHasher.HashPassword(entity, model.ChangePassViewModel.Password);
+            entity.PasswordHash = newPassword;
+            IdentityResult res = await _userManager.UpdateAsync(entity);
 
             if (res.Succeeded)
             {
@@ -306,7 +313,7 @@ namespace Stock.Web.Controllers
                 return RedirectToAction("UserDetails");
             }
 
-            
+
             return View();
         }
 
@@ -314,9 +321,9 @@ namespace Stock.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(string Email)
         {
-          
 
-            var user = await _userManager.FindByEmailAsync(Email);
+
+            Users user = await _userManager.FindByEmailAsync(Email);
 
             if (user == null)
             {
@@ -324,22 +331,22 @@ namespace Stock.Web.Controllers
                 return View();
             }
 
-            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            string code = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            var url = Url.Action("ResetPass", "Account", new
+            string url = Url.Action("ResetPass", "Account", new
             {
                 UserId = user.Id,
                 Token = code
             });
-            var fullUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, url);
-           
-            await _emailSender.SendEmailAsync(Email, "Parola Sıfırla", $"<br><br>Parolanızı yenilemek için linke <a href='{fullUrl}'>tıklayınız.</a>" + 
+            string fullUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, url);
+
+            await _emailSender.SendEmailAsync(Email, "Parola Sıfırla", $"<br><br>Parolanızı yenilemek için linke <a href='{fullUrl}'>tıklayınız.</a>" +
              $"<br><br> <b>Bilgilendirme:</b> Bu link {DateTime.UtcNow.AddHours(3).AddHours(2).ToString("MM/dd/yyyy HH:mm:ss")} tarihine kadar geçerlidir. Bu süreden sonra tekrar şifre sıfırlama isteği göndermeniz gerekecektir.");
-            
-            ToastMessageSender.ShowMessage(this,"success", AccountMessages.ForgotPassEmailSendSuccess);
+
+            ToastMessageSender.ShowMessage(this, "success", AccountMessages.ForgotPassEmailSendSuccess);
 
 
-             return View();
+            return View();
         }
 
 
@@ -356,10 +363,10 @@ namespace Stock.Web.Controllers
                 return RedirectToAction("ErrorOccured", "Home");
             }
 
-            var user = await _userManager.FindByIdAsync(UserId);
+            Users user = await _userManager.FindByIdAsync(UserId);
 
-           
-            if (!await this._userManager.VerifyUserTokenAsync(user,
+
+            if (!await _userManager.VerifyUserTokenAsync(user,
                 _userManager.Options.Tokens.PasswordResetTokenProvider,
                 "ResetPassword", Token))
 
@@ -370,7 +377,7 @@ namespace Stock.Web.Controllers
 
 
 
-                var model = new UserResetPasswordModel
+            UserResetPasswordModel model = new UserResetPasswordModel
             {
                 _Token = Token,
                 _UserId = UserId
@@ -389,22 +396,22 @@ namespace Stock.Web.Controllers
             {
                 return View(model);
             }
-            var user = await _userManager.FindByIdAsync(model._UserId);
+            Users user = await _userManager.FindByIdAsync(model._UserId);
             if (user == null)
             {
                 ToastMessageSender.ShowMessage(this, "warning", AccountMessages.ResetPassIsNotExistUser);
                 return RedirectToAction("Index", "Home");
             }
 
-            var result = await _userManager.ResetPasswordAsync(user, model._Token, model.Password);
+            IdentityResult result = await _userManager.ResetPasswordAsync(user, model._Token, model.Password);
 
             if (result.Succeeded)
             {
-                
-               
 
 
-                var login = await _signInManager.PasswordSignInAsync(user, model.Password, true, false);
+
+
+                Microsoft.AspNetCore.Identity.SignInResult login = await _signInManager.PasswordSignInAsync(user, model.Password, true, false);
 
                 if (login.Succeeded)
                 {
@@ -412,7 +419,7 @@ namespace Stock.Web.Controllers
                     return RedirectToAction("Index", "Admin");
                 }
             }
-         
+
 
             return View(model);
         }

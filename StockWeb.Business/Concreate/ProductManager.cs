@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Threading.Tasks;
-using StockWeb.Business.Abstract;
+﻿using StockWeb.Business.Abstract;
 using StockWeb.Data.Abstract;
-using StockWeb.Data.Concreate.EFCore;
 using StockWeb.Data.Entity;
+using System.Collections.Generic;
 
 namespace StockWeb.Business.Concreate
 {
     public class ProductManager : IProductService
     {
-        private IProductRepository _productRepository;
+        private readonly IProductRepository _productRepository;
 
         public ProductManager(IProductRepository productRepository)
         {
@@ -22,7 +17,7 @@ namespace StockWeb.Business.Concreate
         public void Create(Products entity)
         {
             entity.isActive = true;
-          
+
 
             _productRepository.Create(entity);
         }
@@ -53,7 +48,7 @@ namespace StockWeb.Business.Concreate
 
         public void InsertStock(Purchases entity)
         {
-           
+
             _productRepository.InsertStock(entity);
         }
         public void RemoveStock(Sellings entity)
