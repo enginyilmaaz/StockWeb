@@ -105,7 +105,7 @@ namespace Stock.Web.Controllers
                 });
                 var fullUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, url);
                 await _emailSender.SendEmailAsync(user.Email, "Hesap Onayı", $"<br/><br/>Hesabınızı onaylamak için lütfen <a href='{fullUrl}'>tıklayınız.</a>" +
-                                                                             $"<br><br> <b>Bilgilendirme:</b> Bu link {DateTime.Now.AddDays(2).ToString("MM/dd/yyyy HH:mm:ss")} tarihine kadar geçerlidir. Bu süreden sonra tekrar onay isteği göndermeniz gerekecektir.");
+                                                                             $"<br><br> <b>Bilgilendirme:</b> Bu link {DateTime.UtcNow.AddHours(3).AddDays(2).ToString("MM/dd/yyyy HH:mm:ss")} tarihine kadar geçerlidir. Bu süreden sonra tekrar onay isteği göndermeniz gerekecektir.");
 
 
 
@@ -191,7 +191,7 @@ namespace Stock.Web.Controllers
                 });
                 var fullUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, url);
                 await _emailSender.SendEmailAsync(user.Email, "Hesap Onayı", $"<br/><br/>Hesabınızı onaylamak için lütfen <a href='{fullUrl}'>tıklayınız.</a>" + 
-                  $"<br><br> <b>Bilgilendirme:</b> Bu link {DateTime.Now.AddDays(2).ToString("MM/dd/yyyy HH:mm:ss")} tarihine kadar geçerlidir. Bu süreden sonra tekrar onay isteği göndermeniz gerekecektir.");
+                  $"<br><br> <b>Bilgilendirme:</b> Bu link {DateTime.UtcNow.AddHours(3).AddDays(2).ToString("MM/dd/yyyy HH:mm:ss")} tarihine kadar geçerlidir. Bu süreden sonra tekrar onay isteği göndermeniz gerekecektir.");
                 userExist = true;
 
 
@@ -303,7 +303,7 @@ namespace Stock.Web.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 ToastMessageSender.ShowMessage(this, "warning", AccountMessages.ForgotPassIsAuthenticated);
-                return View("UserDetails");
+                return RedirectToAction("UserDetails");
             }
 
             
@@ -334,7 +334,7 @@ namespace Stock.Web.Controllers
             var fullUrl = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, url);
            
             await _emailSender.SendEmailAsync(Email, "Parola Sıfırla", $"<br><br>Parolanızı yenilemek için linke <a href='{fullUrl}'>tıklayınız.</a>" + 
-             $"<br><br> <b>Bilgilendirme:</b> Bu link {DateTime.Now.AddHours(2).ToString("MM/dd/yyyy HH:mm:ss")} tarihine kadar geçerlidir. Bu süreden sonra tekrar şifre sıfırlama isteği göndermeniz gerekecektir.");
+             $"<br><br> <b>Bilgilendirme:</b> Bu link {DateTime.UtcNow.AddHours(3).AddHours(2).ToString("MM/dd/yyyy HH:mm:ss")} tarihine kadar geçerlidir. Bu süreden sonra tekrar şifre sıfırlama isteği göndermeniz gerekecektir.");
             
             ToastMessageSender.ShowMessage(this,"success", AccountMessages.ForgotPassEmailSendSuccess);
 
@@ -349,7 +349,7 @@ namespace Stock.Web.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 ToastMessageSender.ShowMessage(this, "warning", AccountMessages.ResetPassIsAuthenticated);
-                return View("UserDetails");
+                return RedirectToAction("UserDetails");
             }
             if (UserId == null || Token == null)
             {
@@ -367,6 +367,7 @@ namespace Stock.Web.Controllers
                 ToastMessageSender.ShowMessage(this, "danger", AccountMessages.ResetPassInvalidToken);
                 return RedirectToAction("ForgotPassword", "Account");
             }
+
 
 
                 var model = new UserResetPasswordModel
@@ -399,8 +400,17 @@ namespace Stock.Web.Controllers
 
             if (result.Succeeded)
             {
-                ToastMessageSender.ShowMessage(this, "success", AccountMessages.ResetPassSuccess);
-                return RedirectToAction("Login", "Account");
+                
+               
+
+
+                var login = await _signInManager.PasswordSignInAsync(user, model.Password, true, false);
+
+                if (login.Succeeded)
+                {
+                    ToastMessageSender.ShowMessage(this, "success", AccountMessages.ResetPassSuccess);
+                    return RedirectToAction("Index", "Admin");
+                }
             }
          
 
